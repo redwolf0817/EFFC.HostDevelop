@@ -1,1 +1,23 @@
 # EFFC.HostDevelop
+该项目为EFFC框架中HostJs的开发提供辅助工具，可以支持HostJs的远程开发
+
+# 环境配置
+该项目通过websocket访问EFFC.General.Application的hostdev和hostdebug两个接口进行操作的，因此要想使用该工具，则需要：
+* EFFC.General.Application的运行环境需开通Websocket的支持，如果是IISExpress则需要修改applicationhost.config中的websocket的相关设定，如果是IIS则需要安装websocket组件
+* EFFC.General.Application下web.config/debugMode需要开启
+
+# 使用说明
+配置完成后，直接将本项目发布成网站，index.html为起始页，进去后有四个菜单
+* 设置：用于配置远程应用服务器的地址和host开发使用的模板文件，还有编辑器的样式设定，如果没有配置过远程应用服务器地址，则在第一次进入index.html的时候会自动弹出设置画面提示你进行设定，该配置写入浏览器的localstorage中
+* HostJs开发：这个就是开发编辑器，点开之后会从远程应用服务器上抓取HostJs路径下的View和Logic的文件列表，上面的操作比较简单，不做过多说明
+  
+  资源设定里面会固定抓取远程服务器上的images、Css、Script和HTML四个固定目录下的文件资源，你可以编辑或上传自己的资源文件到远程服务器上
+* HostJs Debug：进去后，点击start就可以开始debug，此时在下方Tips！会出现Debug Code和链接参数，打开浏览器，将这些参数接到要调试的L.A链接之后（如/sample.go后面添加参数变成/sample.go?Debug=1&DebugCode=20170619175600）,回车，这个时候会发现页面处于一直加载的状态，这是正常现象，远程服务器对于处于debug的逻辑处理会进行挂起，此时回到HostJs Debug页面，会发现代码编辑器中出现运行的代码，分为Logic和View两个部分，上方resume亮起，此时可供你检查运行的代码或者在代码中插入断点（代码中要断点的地方写入debug.bp()即可），点击resume，会再你断点的地方停下或整段代码运行完成之后再次挂起停下，以供你进行数据检查，此时可以watch输入框中输入你要查看的对象。如果没有问题，再点击resume直到resume没有亮起为止，则本次debug调试完毕
+
+需要特别说明的是debug中的代码是编译之后的js代码会与自己编写的不相同，在此处修改的代码只会对本次debug有影响
+
+# HosJs帮助手册
+这个帮助手册是基于远程应用服务器提供的，每个远程应用服务器提供的开发接口是不相同的，在帮助手册界面上方选择View或Logic，然后选择服务器对象或标签来查找对应的操作说明
+
+需要特别说明的是，帮助手册是基于远程应用服务器中标签和对象定义时提供的Desc属性来识别的，所以如果有扩展标签或服务器对象，则请在每个方法之前添加[Desc("xxxxx")]来完善自己的帮助手册
+  
