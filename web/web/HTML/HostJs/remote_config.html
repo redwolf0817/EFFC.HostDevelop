@@ -1,0 +1,148 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Starter Template for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/js/bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet" />
+    <link href="/js/bootstrap-3.3.7-dist/css/bootstrap-select.min.css" rel="stylesheet" />
+
+    <title>Host编辑器</title>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="tabbable" id="tabs-270918">
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a href="#panel-131251" data-toggle="tab">远程服务设置</a>
+                        </li>
+                        <li>
+                            <a href="#panel-483140" data-toggle="tab">开发模板设置</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="panel-131251">
+                            <p>
+                                <label>您的应用服务器地址：</label><input type="text" id="remoteserverip" />
+                                <button id="save" class="btn btn-default">保存</button>
+                            </p>
+                        </div>
+                        <div class="tab-pane" id="panel-483140">
+                            <p>
+                                <label>上传您的开发模板：</label><button id="upload" class="btn btn-default">上传</button>
+                            </p>
+                            <p>
+                                <select id="hosttype" class="selectpicker">
+                                    <option value="view">View模板</option>
+                                    <option value="logic">Logic模板</option>
+                                    <option value="html">Html模板</option>
+                                </select>
+                                <br />
+                                <input type="file" id="tfile" class="filestyle" />
+                            </p>
+                            <hr />
+                            <p>
+                                <label>编辑器Theme设置</label>
+                                <select id="retheme" class="selectpicker">
+                                    <option value="ambiance">ambiance</option>
+                                    <option value="chaos">chaos</option>
+                                    <option value="chrome">chrome</option>
+                                    <option value="clouds">clouds</option>
+                                    <option value="clouds_midnight">clouds_midnight</option>
+                                    <option value="cobalt">cobalt</option>
+                                    <option value="crimson_editor">crimson_editor</option>
+                                    <option value="dawn">dawn</option>
+                                    <option value="dreamweaver">dreamweaver</option>
+                                    <option value="eclipse">eclipse</option>
+                                    <option value="github">github</option>
+                                    <option value="idle_fingers">idle_fingers</option>
+                                    <option value="iplastic">iplastic</option>
+                                    <option value="katzenmilch">katzenmilch</option>
+                                    <option value="kr_theme">kr_theme</option>
+                                    <option value="kuroir">kuroir</option>
+                                    <option value="merbivore">merbivore</option>
+                                    <option value="mono_industrial">mono_industrial</option>
+                                    <option value="monokai">monokai</option>
+                                    <option value="pastel_on_dark">pastel_on_dark</option>
+                                    <option value="solarized_dark">solarized_dark</option>
+                                    <option value="solarized_light">solarized_light</option>
+                                    <option value="sqlserver">sqlserver</option>
+                                    <option value="terminal">terminal</option>
+                                    <option value="textmate">textmate</option>
+                                    <option value="tomorrow">tomorrow</option>
+                                    <option value="tomorrow_night">tomorrow_night</option>
+                                    <option value="tomorrow_night_blue">tomorrow_night_blue</option>
+                                    <option value="tomorrow_night_bright">tomorrow_night_bright</option>
+                                    <option value="tomorrow_night_eighties">tomorrow_night_eighties</option>
+                                    <option value="twilight">twilight</option>
+                                    <option value="vibrant_ink">vibrant_ink</option>
+                                    <option value="xcode">xcode</option>
+                                </select>
+                                <hr />
+                            </p>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </div>
+    <script src="/js/jquery-1.11.3.js"></script>
+    <script src="/js/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+    <script src="/js/bootstrap-3.3.7-dist/js/bootstrap-select.min.js"></script>
+    <script src="/js/bootstrap-3.3.7-dist/js/bootstrap-filestyle.min.js"></script>
+    <script src="/js/FrameJs/global.js"></script>
+    <script src="/js/ACEEditor/ace.js"></script>
+</body>
+</html>
+<script type="text/javascript">
+    $(function (e) {
+        $("#remoteserverip").val(g.remoteurl);
+        $("#retheme").val(g.editor_theme);
+
+        $("#save").click(function () {
+            if ($("#remoteserverip").val() == "") {
+                $.Frame.Message.ShowMsg({
+                    msg:"请输入应用服务器地址！"
+                })
+
+                return false;
+            }
+
+            $.Frame.Message.ShowConfirm({
+                msg:"确定保存？",
+                ok: {
+                    text: "确定",
+                    click: function () {
+                        $.Frame.Message.Close();
+                        g.remoteurl = $("#remoteserverip").val();
+                        $.Frame.Message.ShowMsg("保存成功");
+                    }
+                }
+            })
+        })
+
+        $("#upload").click(function () {
+            $.Frame.Net.Ajax(g.remoteurl + "hostdev.uptemplate.go", "post", {
+                file: document.getElementById("tfile").files[0],
+                filetype:$("#hosttype").val()
+            }, "json", {
+                "Content-Type": $.Frame.ContentType.MultiPart
+            }).then(function (rtn) {
+                $.Frame.Message.ShowMsg(rtn.msg);
+            })
+        })
+
+        $("#retheme").change(function () {
+            g.editor_theme = $(this).val();
+        })
+    })
+</script>

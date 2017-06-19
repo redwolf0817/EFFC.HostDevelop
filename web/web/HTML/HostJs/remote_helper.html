@@ -1,0 +1,270 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="/js/jquery-1.8.2.min.js"></script>
+    <script src="/js/FrameJs/global.js"></script>
+    <script src="/js/jquery.tmpl.js"></script>
+    <script src="/js/jquery-tipso/js/tipso.js"></script>
+    <title>HostJs帮助文档</title>
+    <script type="text/x-jquery-tmpl" id="tmpldata">
+        <li id="dockey_${key}" style="list-style-type: none;">
+            <table style="width:100%">
+                <tr>
+                    <td>
+                        <p style="font:bold 26px arial">${key}</p>
+                    </td>
+                    <td><p style="font:20px arial">${content.description}</p></td>
+                </tr>
+                {{each(prop, val) content}}
+                {{if prop == "functions"}}
+                <tr>
+                    <td width="160px">方法</td>
+                    <td>
+                        <table border="1" style="width:100%;text-align:center;border-collapse:collapse">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        名称
+                                    </th>
+                                    <th>
+                                        返回值
+                                    </th>
+                                    <th>
+                                        参数
+                                    </th>
+                                    <th>
+                                        描述
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{each(p1, v1) val}}
+                                {{if p1 != "ToString"}}
+                                <tr>
+                                    <td>${v1.name}</td>
+                                    <td>${v1.returntype}</td>
+                                    <td>
+                                        <ul style="text-align: left; list-style-type: decimal;">
+                                            {{each(i,arg) v1.arguements}}
+                                            <li>${arg.name}:${arg.type}</li>
+                                            {{/each}}
+                                        </ul>
+                                    </td>
+                                    <td>${v1.desc}</td>
+                                </tr>
+                                {{/if}}
+                                {{/each}}
+
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                {{/if}}
+                {{if prop == "properties"}}
+                <tr>
+                    <td>属性</td>
+                    <td>
+                        <table border="1" style="width: 100%; text-align: center; border-collapse:collapse ">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        名称
+                                    </th>
+                                    <th>
+                                        类型
+                                    </th>
+                                    <th>
+                                        描述
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{each(p1, v1) val}}
+                                {{if p1 != "Description" && p1 != "Name"}}
+                                <tr>
+                                    <td>${v1.name}</td>
+                                    <td>${v1.type}</td>
+                                    <td>${v1.desc}</td>
+                                </tr>
+                                {{/if}}
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                {{/if}}
+
+
+                {{/each}}
+                <tr>
+                    <td colspan="2">
+                        <hr />
+                    </td>
+                </tr>
+            </table>
+        </li>
+    </script>
+
+    <script type="text/x-jquery-tmpl" id="tmpltags">
+        <li id="dockey_${key}" style="list-style-type: none;">
+            <table style="width:100%">
+                <tr>
+                    <td>
+                        <p style="font:bold 26px arial">#${key}</p>
+                    </td>
+                    <td><p style="font:20px arial"></p></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <table border="1" style="width: 100%; text-align: center; border-collapse:collapse ">
+                            <thead>
+                                <tr>
+                                    <th style="width:inherit">
+                                        参数
+                                    </th>
+                                    <th>
+                                        分类
+                                    </th>
+                                    <th>
+                                        是否需要大括号
+                                    </th>
+                                    <th>
+                                        说明
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <ul>
+                                            {{each(i, val) content.args}}
+                                            <li style="list-style-type:decimal;text-align:left">
+                                                ${val}
+                                            </li>
+                                            {{/each}}
+                                        </ul>
+                                    </td>
+                                    <td>${content.category}</td>
+                                    <td>${content.isbrace}</td>
+                                    <td style="text-align:left">
+                                        ${content.description}<br />
+                                        样例如下:<br />
+                                        #${key}({{each(index, val) content.args}}${val}{{if index+1 < content.args.length}},{{/if}}{{/each}})
+                                        {{if content.isbrace}}<br />{<br/>//标签内容<br />}{{/if}}
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <hr />
+                    </td>
+                </tr>
+            </table>
+        </li>
+    </script>
+</head>
+<body>
+    <div>
+        <table>
+            <tr>
+                <td>
+                    请选择文档类型：
+                </td>
+                <td>
+                    <select id="jstype">
+                        <option value="view">View</option>
+                        <option value="logic">Logic</option>
+                    </select>
+                    <select id="type">
+                        <option value="serverobj">服务器对象</option>
+                        <option value="tags">标签</option>
+                    </select>
+                    <input type="button" id="check" value="查看" />
+                    <a href="javascript:parent.openwindow('/files/EFFC3.0%e8%af%b4%e6%98%8e.txt','EFFC3.0说明')" target="_blank">EFFC3.0说明.txt</a>
+                    <br />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    筛选：
+                </td>
+                <td>
+                    <select id="content">
+                        <option value="">--全部--</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+    </div><br />
+    <div style="width:inherit">
+        <ul>
+            <li>
+                <p style="font: bold 18px arial">前言：Host Js使用的语法为Js语法，辅以服务器端对象和标签进行Server端的开发</p>
+            </li>
+            <li>
+                <p style="font: bold 18px arial">说明：本手册为开发者提供开发帮助，API为Server端的对象和相关标签，</p>
+                <p style="font: bold 18px arial">请点击查看进行浏览,选择“全部”可以显示所有的API，或者选择单个就只显示指定的对象</p>
+                <p style="font: bold 18px arial">微信的Logic开发注意事项，EFFC框架针对微信服务器请求过来的Msg或Event转化成对应action(相关的MsgType或Event可以参阅微信的开发文档-接收消息部分)，action为空的时候则表示是微信的验证请求，需要做验证处理</p>
+                <p style="font: bold 18px arial"></p>
+            </li>
+        </ul>
+
+        <ul id="result" style="width:90%"></ul>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    $(function (e) {
+        $("#check").click(function () {
+            $.Frame.Net.Ajax(g.remoteurl + "hostdev.help.go", "post", {
+                jstype: $("#jstype").val(),
+                type: $("#type").val()
+            }).then(function (rtn) {
+                var a = new Array();
+                var index = 0;
+                $("#result").empty();
+                $("#content").empty();
+                $("#content").append("<option value=''>--全部--</option>");
+                for (var k in rtn) {
+                    a[index] = {
+                        key: k,
+                        content: rtn[k]
+                    }
+                    index++;
+
+                    $("#content").append("<option value='" + k + "'>" + k + "</option>");
+                }
+                if ($("#type").val() == "serverobj") {
+                    $("#tmpldata").tmpl(a).appendTo("#result");
+                } else {
+                    $("#tmpltags").tmpl(a).appendTo("#result");
+                }
+
+
+                $("#content").trigger("change");
+            });
+        })
+
+        $("#content").change(function () {
+            var selval = $(this).val();
+            if (selval != "") {
+
+                $("#content option").each(function (i, v) {
+                    if ($(v).val() != selval)
+                        $("#dockey_" + $(v).val()).hide();
+                    else
+                        $("#dockey_" + $(v).val()).show();
+                })
+            } else {
+                $("#content option").each(function (i, v) {
+                    $("#dockey_" + $(v).val()).show();
+                })
+            }
+        })
+    })
+</script>

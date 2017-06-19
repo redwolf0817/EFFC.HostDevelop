@@ -1,0 +1,329 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Starter Template for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/js/bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet" />
+    <!--<link href="/css/starter-template.css" rel="stylesheet" />-->
+</head>
+<body>
+
+    <div class="container">
+        <div class="row clearfix" style="height:5px"></div>
+        <div class="row-fluid navbar navbar-default" style="">
+            <div class="col-lg-12 column" style="padding-top:5px">
+                <div class="btn-group">
+                    <button id="start" class="btn btn-primary">Start</button>
+                    <button id="resume" class="btn btn-primary">Resume</button>
+                    <button id="end" class="btn btn-primary">End</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <div class="tabbable" id="tabs-56920">
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a href="#panel-1" data-toggle="tab">Logic Source Code</a>
+                        </li>
+                        <li>
+                            <a href="#panel-2" data-toggle="tab">Logic View Code</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="panel-1">
+                            <div class="row-fluid navbar navbar-default" style="">
+                                <div class="col-lg-12 column" style="padding-top:8px">
+                                    <div class="btn-group">
+                                        <button id="updcode" class="btn btn-warning">Update Code</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="span12">
+                                <div class="row-fluid">
+                                    <div id="editor" style="width:100%;height:400px"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="panel-2">
+                            <div class="row-fluid navbar navbar-default" style="">
+                                <div class="col-lg-12 column" style="padding-top:8px">
+                                    <div class="btn-group">
+                                        <button id="updcode_view" class="btn btn-warning">Update Code</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="span12">
+                                <div class="row-fluid">
+                                    <div id="vieweditor" style="width:100%;height:400px"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="row clearfix">
+            <div class="alert">
+                <button type="button" id="cleartips" class="close">×</button>
+                <h4>
+                    Tips!
+                </h4>
+                <strong id="tips"></strong>
+            </div>
+        </div>
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <div class="tabbable" id="tabs-56920">
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a href="#panel-692749" data-toggle="tab">Watch</a>
+                        </li>
+                        <li>
+                            <a href="#panel-692750" data-toggle="tab">Console</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="panel-692749">
+                            <br />
+                            <div class="col-md-8 column">
+                                <input type="text" placeholder="The object watched..." id="express" class="form-control" />&nbsp;&nbsp;
+                            </div>
+                            <div class="col-md-4 column">
+                                <button id="watch" class="btn btn-primary btn-large">Watch</button>
+                                <button id="clear" class="btn btn-warning btn-large">Clear</button>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="col-md-12">
+                                    <div class="panel-group" id="panel-363241" style="height:300px;">
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="tab-pane" id="panel-692750">
+                            <div class="alert">
+                                <button type="button" id="clearconsole" class="close">×</button>
+                                <h4>
+                                    Console Info!
+                                </h4>
+                                <strong id="console"></strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/jquery-1.11.3.js"></script>
+    <script src="/js/FrameJs/global.js"></script>
+    <script src="/js/ACEEditor/ace.js"></script>
+    <script src="/js/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+    <script src="/js/bootstrap_dialog.js"></script>
+</body>
+</html>
+<script type="text/javascript">
+    $(function () {
+        var editor = ace.edit("editor");
+        editor.setTheme("ace/theme/" + g.editor_theme);
+        editor.getSession().setMode("ace/mode/javascript");
+        var vieweditor = ace.edit("vieweditor");
+        vieweditor.setTheme("ace/theme/" + g.editor_theme);
+        vieweditor.getSession().setMode("ace/mode/javascript");
+
+
+        var myws = null;
+        SetButtonState();
+        $("#start").click(function () {
+            myws = $$.Net.WS(g.remoteurl + "hostdebug.go").On("open", function (ws) {
+                AddTips("连接开启");
+                console.debug("ws open");
+                ws.Send({
+                    command: "debugcode",
+                    express: ""
+                })
+            }).On("close", function (ws) {
+                setTimeout(function () {
+                    SetButtonState("end");
+                }, 2000);
+                AddTips("连接关闭");
+                console.debug("ws close");
+            }).On("message", function (ws, rtn) {
+                if (rtn) {
+                    if (rtn.issuccess) {
+                        if (rtn.command == "debugcode") {
+                            SetButtonState("start");
+
+                            AddTips("Debug已启动，当前Debug Code为\"" + rtn.result + "\"");
+                            AddTips("请在需要debug的请求中添加参数：Debug=1&DebugCode=" + rtn.result);
+                        } else if (rtn.command == "source") {
+                            editor.getSession().setMode("ace/mode/javascript");
+                            editor.setValue($$.base64Decode(rtn.result));
+                        } else if (rtn.command == "viewsource") {
+                            vieweditor.getSession().setMode("ace/mode/javascript");
+                            vieweditor.setValue($$.base64Decode(rtn.result));
+                        } else if (rtn.command == "checkobj") {
+                            var str = rtn.result ? JSON.stringify(rtn.result) : "";
+                            var index = $(".panel-heading").size();
+                            str = str == "" ? "执行无结果" : str;
+                            if (str != "") {
+                                var top = $('<div class="panel panel-default"></div>');
+                                var div = $("<div class='panel-heading'></div>");
+                                var link = $('<a class="panel-title collapsed" data-toggle="collapse" data-parent="#panel-363241" href="#panel-element-' + index + '">' + $$.base64Decode(rtn.express) + '</a>');
+                                var del = $('<img src="/images/icon/del.png" style="margin-left:90%;height:20px;width:20px"/>')
+                                del.click(function () {
+                                    top.remove();
+                                })
+                                div.append(link);
+                                div.append(del);
+                                var div1 = $('<div id="panel-element-' + index + '" class="panel-collapse collapse"></div>');
+                                div1.append($('<div class="panel-body" style="overflow-y:auto;height:200px">' + str + '</div>'));
+                                top.append(div);
+                                top.append(div1);
+
+                                $("#panel-363241").append(top);
+                                link.trigger("click");
+                            }
+                        } else if (rtn.command == "console") {
+                            $("#console").text(rtn.result);
+                        } else if (rtn.command == "pend") {
+                            SetButtonState("pend");
+                            //SyncConsole();
+                        } else if (rtn.command == "resume") {
+                            SetButtonState("resume");
+                            //SyncConsole();
+                        } else if (rtn.command == "set_source") {
+                            alert($$.base64Decode(rtn.msg.replaceAll(" ", "+")));
+                        } else if (rtn.command == "set_viewsource") {
+                            alert($$.base64Decode(rtn.msg.replaceAll(" ", "+")));
+                        }
+                    } else {
+                        alert($$.base64Decode(rtn.msg.replaceAll(" ", "+")));
+                    }
+
+
+                }
+            }).On("error", function (ws, status, msg) {
+                SetButtonState();
+                alert(msg);
+            })
+        })
+
+        $("#end").click(function () {
+            myws.Close();
+            //SetButtonState("end");
+        })
+
+        $("#watch").click(function () {
+            if (!myws) {
+                AddTips("请点击Start开始");
+                console.info("请点击Start开始");
+                return;
+            }
+            if ($("#express").val() != "") {
+                myws.Send({
+                    command: "checkobj",
+                    express: $$.base64Encode($("#express").val())
+                })
+            }
+        })
+
+        $("#updcode").click(function () {
+            if (!myws) {
+                AddTips("请点击Start开始");
+                console.info("请点击Start开始");
+                return;
+            }
+            if (editor.getValue() != "") {
+                myws.Send({
+                    command: "set_source",
+                    express: $$.base64Encode(editor.getValue())
+                })
+            }
+        })
+        $("#updcode_view").click(function () {
+            if (!myws) {
+                AddTips("请点击Start开始");
+                console.info("请点击Start开始");
+                return;
+            }
+            if (vieweditor.getValue() != "") {
+                myws.Send({
+                    command: "set_viewsource",
+                    express: $$.base64Encode(vieweditor.getValue())
+                })
+            }
+        })
+
+        $("#resume").click(function () {
+            if (myws && !myws.IsClose()) {
+                myws.Send({
+                    command: "resume"
+                });
+            }
+        })
+        $("#cleartips").click(function () {
+            $("#tips").text("");
+        })
+        $("#clearconsole").click(function () {
+            $("#console").text("");
+        })
+        $("#clear").click(function () {
+            $(".panel.panel-default").remove();
+        })
+
+        $("a[href='#panel-692750']").click(function () {
+            SyncConsole();
+        })
+
+        function SyncConsole() {
+            if (myws && !myws.IsClose()) {
+                myws.Send({
+                    command: "console",
+                    express: ""
+                });
+            }
+        }
+
+        function AddTips(msg) {
+            if (msg && msg != "") {
+                var tmp = $("#tips").html();
+                $("#tips").html(tmp == "" ? msg : tmp + "<br/>" + msg);
+            }
+        }
+
+        function SetButtonState(state) {
+            if (state === "start") {
+                $("#start").attr("disabled", true);
+                $("#resume").attr("disabled", true);
+                $("#end").removeAttr("disabled");
+            } else if (state === "resume") {
+                $("#start").attr("disabled", true);
+                $("#resume").attr("disabled", true);
+                $("#end").removeAttr("disabled");
+            } else if (state === "pend") {
+                $("#start").attr("disabled", true);
+                $("#resume").removeAttr("disabled");
+                $("#end").removeAttr("disabled");
+            } else {
+                $("#start").removeAttr("disabled");
+                $("#resume").attr("disabled", true);
+                $("#end").attr("disabled", true);
+            }
+        }
+    })
+
+
+
+</script>

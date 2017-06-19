@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <script src="/js/jquery-1.8.2.min.js"></script>
+    <script src="/js/FrameJs/global.js"></script>
+    <title>Host编辑器</title>
+</head>
+<body>
+    <div>
+        <label>文件名称：</label><input type="text"  id="filename"/>
+    </div>
+    <div>
+        <label>类型：</label>
+        <select id="jstype">
+            <option value="view">View</option>
+            <option value="logic">Logic</option>
+        </select>
+    </div>
+    <div>
+        <input type="button" id="save" value="保存" />
+        <input type="button" id="compile" value="编译" />
+    </div>
+    <div>
+        <textarea style="width:800px;height:600px" id="content"></textarea>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    $(function (e) {
+        $("#save").click(function () {
+
+        })
+    })
+</script>

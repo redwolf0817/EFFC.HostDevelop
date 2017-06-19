@@ -1,0 +1,146 @@
+﻿--底层Frame架构调整
+1.添加文本Tag解析和系统架构
+2.提供将logic，unit和view转化为host js编写
+3.添加缓存接口，并提供内存和持久化层级别的两种缓存
+4.添加对websocket的支持
+5.DB提供新的操作方式（DBExpress），通过json来实现DB资料操作，json格式如下
+{
+	$acttype : 'Query',
+	$table : {
+			table1:'a',
+			table2:{
+				$as:'b',
+				$join:{
+					$by:'a',
+					$on:{
+						col1:value,
+						col2:{
+							$op:value,
+							$op:value
+						}
+					}
+				}
+			},
+			table3:{
+				$as:'c',
+				$joinl:{
+					$by:'a',
+					$on:{
+						col1:value,
+						col2:{
+							$op:value,
+							$op:value
+						}
+					}
+				}
+			}
+		}
+	col1 : value,
+	col2 : value,
+	coln : value,
+	$orderby:{
+		col1:'desc',
+		col2:'asc'
+	},
+	$distinct:boolvalue,
+	$prefix:'express',
+	$where : {
+		col1 : value,
+		col2 : {
+			$op : value,
+			$op : value
+		},
+		'func(col3)':{
+			$op:value,
+			$op:value
+		}
+		$or :
+		[{
+				c1 : {
+					$op : value,
+					$op : value
+				},
+				c2 : {
+					$op : value,
+					$op : value
+				}
+			}, {
+				cn : {
+					$op : value
+				}
+			}
+		],
+		$fields : {
+			fc1 : {
+				$fop : value
+			},
+			fc2 : {
+				$fop : value
+			}
+		}
+	}
+}
+
+
+1).where可以为空表示无条件，where只有在Update、select、delete中有效，insert无where表达式
+2).$op提供操作如下：
+$eq:=
+$neq:<>,!=
+$lt:<
+$gt:>
+$gte:>=
+$lte:<=
+$in:in ['xxx','xxx','xxx']  
+$nin: not in ['xxx','xxx','xxx'] 
+$or:or 操作
+$like:like '%xxx%'
+$likel:like 'xxx%'
+$liker:like '%xxx'
+$acttype($ActType):该条件表达式表示的操作类型，值为string：Insert,Query,Delete,Update,QueryByPage,默认为Query,QueryByPage为sql类型数据库特有
+$table:如果为json对象，则为sql类型数据库特有
+$fields:为mongo特有操作
+$distinct:为sql类型数据特有操作（已过时，不再使用，采用$prefix替换）
+$prefix:表达式前缀，范围为：distinct，top x等，为sql类型数据特有操作
+$orderby:为sql类型数据特有操作
+3).如果数据为二进制数据则需要将二进制数据转化成string类型，用base64编码，然后在string前面加上"#2:"(含:)，mongo表达式暂不提供二进制数据类型识别
+如果数据为数据库中的保留字或函数一类，则在文字前面加上“#sql:”(含:)，表示后面的文字为数据库自有函数或关键字，
+4).当acttype为Query，QueryByPage的情况下:普遍的栏位（可以为*，*仅只有关系型数据中含有，mongo不含）对应的数据类型为bool类型时，true表示结果集中显示，false表示结果集中不显示，如果没有栏位则表示查询所有的数据。
+如果对应数据为其它数据类型，则会转化为as表达式
+如果对应的文字以“#sql:”开头则表示为数据库中特有的表达式，会被转化成as表达式
+acttype为非查询情况下:则普通栏位对应正常的业务数据类型
+5).在BaseLogic.DB中提供Excute来实现这种操作
+
+--开发周边调整
+1.提供基于host js开发和项目管理的系统
+2.提供Tag标签应用
+
+--标签说明
+标签分为基本标签和自定义扩展标签，基本标签为框架自带标签，默认每个Tag module都会自带，其标签category为base，自定义标签采用assembly加载，通过设定GlobalCommon.TagCommon.TagAssemblyPath来加载。
+现有系统标签如下：
+
+#load(文件路径)：不带大括号，将指定路径下的文本内容加载到当前文本中，路径可以使用~作为rootpath,该参数由module中的TagParameter.RootPath提供。该标签为最基本标签，最优先加载。
+
+#ref(标记名称，是否保留文本):带大括号，将大括号中的文本内容加载到TagContext中，提供给其他文本引用。
+是否保留文本为可选参数（bool），默认为true，如果为false，则该标签的内容将清除，否则保留内容
+
+#copy(ref标记名称,拷贝次数):不带大括号，通过ref标记名称搜索TagContext中ref的文本内容，并将该文本内容拷贝到本标签的位置。
+拷贝次数为可选参数（int类型），如果不给则表示拷贝一次。
+
+HostViewEngine
+该引擎会将标签页面转化成hostjs文件，然后通过hostjs引擎进行输出view的html
+该引擎提供以下对象：
+model：页面层的数据对象，为json对象
+document:当前文本对象
+
+该引擎标签如下（通用标签不在此描述）：
+#out(model.xx)：不带大括号,转化成"#hjs{document.write(数据名称)}"的文本
+#for(model.xx)：带大括号，转化成"#hjs{for(var item in model.xx){xxxx}}"的文本
+#if(js表达式)：带大括号，转化成"#hjs{if(js表达式){xxxx}}"的文本
+#hjs:带大括号，直接将括号中的内容转化成可以执行的js文本
+
+
+HostLogicEngine
+该引擎会将带标签的logic文件进行编译成完整的hjs文件，并执行编译好之后的hjs文件
+该引擎标签如下（通用标签不在此描述）：
+#action(xxx):带大括号，将括号中的内容生成为单独的js文件，文件名为该code名称+"."+action名称+".hjs"
+

@@ -1,0 +1,423 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="/js/jquery-1.8.2.min.js"></script>
+    <script src="/js/FrameJs/global.js"></script>
+    <script src="/js/ACEEditor/ace.js"></script>
+    <title>Host编译器</title>
+    <style type="text/css" media="screen">
+        #editor {
+            margin: 0;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div style="align-items:center;width:98%">
+        <table style="width:100%">
+            <tr>
+                <td width="160px">请选择专案工程：</td>
+                <td>
+                    <select id="selproject"></select>
+                    <input type="text" id="txtproject" />
+                    <input type="button" id="btnSaveProject" value="保存" />
+                    <input type="button" id="btnDelProject" value="删除" />
+                </td>
+            </tr>
+            <tr>
+                <td width="160px">请选择要编译文件：</td>
+                <td>
+                    <select id="selfile"></select>
+                    <select id="jstype">
+                        <option value="view" selected="selected">View</option>
+                        <option value="logic">Logic</option>
+                    </select>
+                    <input type="button" id="btnCompile" value="编译并执行" />
+                    <input type="button" id="btnCompileAll" value="编译所有文件" />
+                    <input type="button" id="btnPublish" value="发布" />
+                </td>
+            </tr>
+            <tr>
+                <td width="160px">文件名称：</td>
+                <td>
+                    <input type="text" id="filename" />
+                    <input type="button" id="save" value="保存(alt+s)" />
+                    <input type="button" id="del" value="删除" />
+                </td>
+            </tr>
+            <tr>
+                <td width="160px">源码：</td>
+                <td>
+                    <div id="code" style="width:100%;height:600px;font-size:14px"></div>
+                </td>
+            </tr>
+            <tr>
+                <td width="160px">信息提示：</td>
+                <td>
+                    <label id="tips" style="font:bold 14px arial;color:green"></label>
+                    <textarea id="result" readonly="readonly" style="width: 100%; height: 200px; "></textarea>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    $(function (e) {
+        var editor = ace.edit("code");
+        editor.setTheme("ace/theme/twilight");
+        $("#jstype").change(function () {
+            var url = "";
+            if ($(this).val() == "view") {
+                url = "hosteditor.allfiles.go";
+                editor.getSession().setMode("ace/mode/html");
+            } else {
+                url = "hosteditor.alllogicfiles.go";
+                editor.getSession().setMode("ace/mode/javascript");
+            }
+
+            $.Frame.Ajax.Ajax({
+                url: url,
+                postdata: {
+                    projectname: $("#selproject").val()
+                },
+                success: function (rtn) {
+                    $("#selfile").empty();
+                    if (rtn.files) {
+                        for (var f in rtn.files) {
+                            $("#selfile").append("<option value='" + rtn.files[f] + "'>" + rtn.files[f] + "</option>");
+                        }
+                    }
+                    $("#selfile").trigger("change");
+                },
+            })
+        })
+
+        
+
+        $("#selfile").change(function () {
+            var v = $(this).val();
+            if (v) {
+                $("#filename").val(v.split(".")[0]);
+                $.Frame.Ajax.Ajax({
+                    url: "hosteditor.getcode.go",
+                    postdata: {
+                        file: $("#selfile").val(),
+                        jstype: $("#jstype").val(),
+                        projectname: $("#selproject").val()
+                    },
+                    success: function (rtn) {
+                        if (rtn.issuccess) {
+                            editor.setValue(decodeURIComponent(rtn.content.replace(/\+/g, '%20')));
+                        } else {
+                            $.Frame.Message.ShowMsg(rtn.msg);
+                        }
+                    }
+                })
+            } else {
+                $("#filename").val("");
+            }
+        })
+
+        $("#btnCompile").click(function () {
+            var url = "";
+            if ($('#jstype').val() == "view") {
+                url = "hosteditor.compileview.go";
+            } else {
+                url = "hosteditor.compilelogic.go";
+            }
+
+            $.Frame.Ajax.Ajax({
+                url: url,
+                postdata: {
+                    file: $("#selfile").val(),
+                    projectname: $("#selproject").val()
+                },
+                before: function (e) {
+
+                },
+                success: function (rtn) {
+                    if (rtn.issuccess) {
+                        $("#result").val(rtn.msg);
+                        $.Frame.Message.ShowMsg("编译成功");
+                    } else {
+                        $("#result").val(rtn.msg);
+                        $.Frame.Message.ShowMsg("编译失败，详情请查看信息提示");
+                    }
+                },
+                complete: function (XMLHttpRequest, textStatus) {
+
+                },
+                fail: function (errorcode, errormsg) {
+
+                }
+            })
+        })
+        var savews;
+        $("#save").click(function () {
+            if ($("#filename").val() == "") {
+                $.Frame.Message.ShowMsg("请输入文件名称");
+                return false;
+            }
+
+            var code = encodeURIComponent(editor.getValue());
+
+            //$.Frame.Ajax.Ajax({
+            //    url: "hosteditor.save.go",
+            //    postdata: {
+            //        filename: $("#filename").val(),
+            //        jstype: $("#jstype").val(),
+            //        code: code
+            //    },
+            //    success: function (rtn) {
+            //        if (rtn.issuccess) {
+            //            $("#tips").text("保存成功");
+            //            ws.Close();
+            //            var filename = $("#filename").val();
+            //            var ext = $('#jstype').val() == "view" ? "html" : "js";
+            //            if ($("#selfile").val() != filename + "." + ext) {
+            //                $('#jstype').trigger('change');
+            //            }
+            //        } else {
+            //            $.Frame.Message.ShowMsg(rtn.msg);
+            //        }
+            //    }
+            //})
+
+            if (!savews || savews.IsClose()) {
+                savews = $.Frame.Ajax.WebSocket.Open({
+                    url: "hosteditor.save.go",
+                    onopen: function (ws) {
+                        $("#result").text("已连接");
+                        savews.Send({
+                            filename: $("#filename").val(),
+                            jstype: $("#jstype").val(),
+                            code: code,
+                            projectname: $("#selproject").val()
+                        })
+                    },
+                    onmessage: function (ws, data) {
+                        if (data.issuccess) {
+                            $("#tips").text("保存成功");
+                            ws.Close();
+                            var filename = $("#filename").val();
+                            var ext = $('#jstype').val() == "view" ? "html" : "js";
+                            if ($("#selfile").val() != filename + "." + ext) {
+                                $('#jstype').trigger('change');
+                            }
+                        } else {
+                            $.Frame.Message.ShowMsg(data.msg);
+                        }
+                    },
+                    onerror: function (ws, errorcode, errormsg) {
+                        $.Frame.Message.ShowMsg(errormsg);
+                        ws.Close();
+                    },
+                    onclose: function () {
+                        $("#result").text($("#result").val() + "\n已关闭");
+                        $("#connect").enable(true);
+                        $("#closeconnect").enable(false);
+                    }
+                })
+            } else {
+                savews.Send({
+                    filename: $("#filename").val(),
+                    jstype: $("#jstype").val(),
+                    code: code
+                })
+            }
+
+
+        })
+
+        $("#del").click(function () {
+            $.Frame.Message.Dialog({
+                msg: "确定要删除“" + $("#filename").val() + "”吗？",
+                buttons: [{
+                    text: "确定", click: function () {
+                        $.Frame.Ajax.Ajax({
+                            url: "hosteditor.del.go",
+                            postdata: {
+                                filename: $("#filename").val(),
+                                jstype: $("#jstype").val(),
+                                projectname: $("#selproject").val()
+                            },
+                            success: function (rtn) {
+                                $("#selfile").empty();
+                                if (rtn.files) {
+                                    for (var f in rtn.files) {
+                                        $("#selfile").append("<option value='" + rtn.files[f] + "'>" + rtn.files[f] + "</option>");
+                                    }
+                                }
+                                $('#jstype').trigger('change');
+                            },
+                        })
+                    }
+                }, {
+                    text: "取消", click: function () {
+                        $(this).dialog("close");
+                    }
+                }]
+            })
+
+        })
+
+        $("#newview").click(function () {
+            $("#newjs").show();
+        })
+
+        $("#btnCompileAll").click(function () {
+            $.Frame.Ajax.WebSocket.Open({
+                url: "hosteditor.compileall.go",
+                onopen: function (ws) {
+                    $("#result").val("已连接");
+                    ws.Send({
+                        projectname: $("#selproject").val()
+                    })
+                },
+                onmessage: function (ws, data) {
+                    if (Object.prototype.toString.call(data) === "[object String]") {
+                        $("#result").val($("#result").val() + "\n" + data);
+                    } else {
+                        if (data.issuccess) {
+                            ws.Close();
+                            $.Frame.Message.ShowMsg("编译成功");
+                        } else {
+                            $.Frame.Message.ShowMsg(data.msg);
+                        }
+                    }
+                },
+                onerror: function (ws, errorcode, errormsg) {
+                    $.Frame.Message.ShowMsg(errormsg);
+                    ws.Close();
+                },
+                onclose: function () {
+                    $("#result").val($("#result").val() + "\n已关闭");
+                }
+            })
+        })
+        var isprocess = false;
+        $("#btnPublish").click(function () {
+            if (isprocess) {
+                $.Frame.Message.ShowMsg("正在处理中，请稍后再试");
+                return;
+            }
+            $.Frame.Ajax.WebSocket.Open({
+                url: "hosteditor.publish.go",
+                onopen: function (ws) {
+                    $("#result").val("已连接");
+                    ws.Send({
+                        projectname: $("#selproject").val()
+                    });
+                    isprocess = true;
+                },
+                onmessage: function (ws, data) {
+                    if (Object.prototype.toString.call(data) === "[object String]") {
+                        $("#result").val($("#result").val() + "\n" + data);
+                    } else if (Object.prototype.toString.call(data) == "[object Blob]") {
+                        var aLink = document.createElement('a');
+                        var blob = data;
+                        var evt = document.createEvent("HTMLEvents");
+                        evt.initEvent("click", false, false);//initEvent 不加后两个参数在FF下会报错, 感谢 Barret Lee 的反馈
+                        aLink.download = "publish.zip";
+                        aLink.href = URL.createObjectURL(blob);
+                        aLink.dispatchEvent(evt);
+                    } else {
+                        if (data.issuccess) {
+                            ws.Close();
+                            $.Frame.Message.ShowMsg("发布成功");
+                        } else {
+                            $.Frame.Message.ShowMsg(data.msg);
+                        }
+                    }
+                },
+                onerror: function (ws, errorcode, errormsg) {
+                    $.Frame.Message.ShowMsg(errormsg);
+                    ws.Close();
+                },
+                onclose: function () {
+                    $("#result").val($("#result").val() + "\n已关闭");
+                    isprocess = false;
+                }
+            })
+        })
+
+        
+
+        $(document).keyup(function (e) {
+            var e = window.event;
+            if (e.altKey && e.keyCode == "83") {
+                $("#save").trigger("click");
+            }
+        })
+
+        $("#selproject").change(function () {
+            $("#txtproject").val($(this).find("option:selected").text());
+            $('#jstype').trigger('change');
+        })
+
+        function loadProject() {
+            $.Frame.Ajax.Ajax({
+                url: "hosteditor.allproject.go",
+                postdata: "",
+                success: function (rtn) {
+                    $("#selproject").empty();
+                    if (rtn.directories) {
+                        for (var f in rtn.directories) {
+                            $("#selproject").append("<option value='" + rtn.directories[f] + "'>" + rtn.directories[f] + "</option>");
+                        }
+                    }
+                    $("#selproject").trigger("change");
+                },
+            })
+        }
+
+        
+        $("#btnSaveProject").click(function(){
+            $.Frame.Ajax.Ajax({
+                url: "hosteditor.saveproject.go",
+                postdata: {
+                    projectname: $("#txtproject").val()
+                },
+                success: function (rtn) {
+                    $.Frame.Message.ShowMsg(rtn.msg);
+                    if (rtn.issuccess) {
+                        loadProject();
+                    }
+                },
+            })
+        })
+
+        $("#btnDelProject").click(function () {
+            $.Frame.Message.Dialog({
+                msg: "确定要删除“" + $("#selproject").val() + "”吗？",
+                buttons: [{
+                    text: "确定", click: function () {
+                        $.Frame.Ajax.Ajax({
+                            url: "hosteditor.delproject.go",
+                            postdata: {
+                                projectname: $("#selproject").val()
+                            },
+                            success: function (rtn) {
+                                $.Frame.Message.ShowMsg(rtn.msg);
+                                if (rtn.issuccess) {
+                                    loadProject();
+                                }
+                            },
+                        })
+                    }
+                }, {
+                    text: "取消", click: function () {
+                        $(this).dialog("close");
+                    }
+                }]
+            })
+
+            
+        })
+
+
+        loadProject();
+    })
+</script>

@@ -1,0 +1,414 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Host编译器</title>
+    <link href="/js/jquery-tipso/css/tipso.css" rel="stylesheet" />
+    <link href="/js/bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet" />
+    <link href="/js/bootstrap-3.3.7-dist/css/bootstrap-select.min.css" rel="stylesheet" />
+    
+    <style type="text/css" media="screen">
+        #editor {
+            margin: 0;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div style="align-items:center;width:98%">
+        <table style="width:100%;">
+            <tr>
+                <td>上资源文件</td>
+                <td>
+                    <select id="resourcetype">
+                        <option value="~/">站点根路径</option>
+                        <option value="~/js/">站点Js路径</option>
+                        <option value="~/css/">站点Css路径</option>
+                        <option value="~/images/">站点Image路径</option>
+                        <option value="%host%/">HostJs根路径</option>
+                        <option value="%host%/">HostJs公共资源路径</option>
+                        <option value="%host%/views/">HostJs View路径</option>
+                        <option value="%host%/logics/">HostJs Logic路径</option>
+                    </select>
+                    <input type="text" id="uploadpath" data-tipso="可以从前面选项中选择路径，也可以自己写路径；~或%web%：表示站点根路径，%host%：表示HostJs的根路径" /><br /><br />
+                    <input type="file" id="myfile" multiple="multiple" data-tipso="Zip会被解压，其余类型文件直接保存到对应目录" /><br /><br />
+                    <button id="doupload">上传资源文件</button>
+                </td>
+            </tr>
+            <tr>
+                <td width="160px">请选择要编译文件：</td>
+                <td>
+                    <select id="selfile"></select>
+                    <select id="jstype">
+                        <option value="view" selected="selected">View</option>
+                        <option value="logic">Logic</option>
+                    </select>
+                    <input type="button" id="btnNew" value="新建" />
+                    <input type="button" id="btnCompile" value="编译" />
+                    <input type="button" id="btnCompileAll" value="编译所有文件" />
+                    <input type="button" id="btnDownCode" value="下载源码" />
+                    <input type="button" id="preview" value="运行"/>
+                </td>
+            </tr>
+            <tr>
+                <td width="160px">文件名称：</td>
+                <td>
+                    <input type="text" id="filename" />
+                    <input type="button" id="save" value="保存(alt+s)" />
+                    <input type="button" id="del" value="删除" />
+                </td>
+            </tr>
+            <tr>
+                <td width="160px">源码：</td>
+                <td>
+                    <div id="code" style="width:100%;height:600px;font-size:14px"></div>
+                </td>
+            </tr>
+            <tr>
+                <td width="160px">信息提示：</td>
+                <td>
+                    <label id="tips" style="font:bold 14px arial;color:green"></label>
+                    <textarea id="result" readonly="readonly" style="width: 100%; height: 200px; "></textarea>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="progressNumber"></div>
+    <script src="/js/jquery-1.11.3.js"></script>
+    <script src="/js/FrameJs/global.js"></script>
+    <script src="/js/ACEEditor/ace.js"></script>
+    <script src="/js/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+    <script src="/js/bootstrap-3.3.7-dist/js/bootstrap-select.js"></script>
+    <script src="/js/jquery-tipso/js/tipso.js"></script>
+</body>
+</html>
+
+<script type="text/javascript">
+    $(function (e) {
+        if (!g.isconfig_show) {
+            return false;
+        }
+        var editor = ace.edit("code");
+        editor.setTheme("ace/theme/twilight");
+
+        $('#uploadpath').tipso({
+            useTitle: false,
+            position: 'bottom'
+        });
+        $("#myfile").tipso({
+            useTitle: false,
+            position: 'bottom'
+        })
+
+        $("#resourcetype").change(function () {
+            $("#uploadpath").val(this.value);
+        })
+
+        $("#doupload").bind("click", function () {
+            if (document.getElementById("myfile").files.length <= 0) {
+                $.Frame.Message.ShowMsg("请选择要上传的文件");
+                return;
+            }
+            if ($("#uploadpath").val() == "") {
+                $.Frame.Message.ShowMsg("请输入目标路径");
+                return;
+            }
+            var data = {
+                path: $("#uploadpath").val(),
+                filecount: document.getElementById("myfile").files.length,
+            }
+            for (var i = 0; i < document.getElementById("myfile").files.length;i++) {
+                data["myfile" + i] = document.getElementById("myfile").files[i];
+            }
+            $.Frame.Net.Ajax(g.remoteurl + "hostdev.uploadresource.go", "post", data, "json", {
+                "Content-Type": $.Frame.ContentType.MultiPart
+            }).then(function (rtn) {
+                $.Frame.Message.ShowMsg(rtn.msg);
+            }).catch(function (rtn) {
+                $.Frame.Message.ShowMsg(rtn.errorMsg);
+            })
+        })
+
+        $("#resourcetype").trigger("change");
+
+        $("#jstype").change(function () {
+            var url = g.remoteurl + "hostdev.allfiles.go";
+            var jstype = $(this).val();
+            if (["view","css"].contains(jstype)) {
+                editor.getSession().setMode("ace/mode/html");
+            } else {
+                editor.getSession().setMode("ace/mode/javascript");
+            }
+
+
+            $.Frame.Net.Ajax(url, "post", {
+                filetype: $("#jstype").val()
+            }, "json").then(function (rtn) {
+                $("#selfile").empty();
+                if (rtn.files) {
+                    for (var f = 0; f < rtn.files.length; f++) {
+                        $("#selfile").append("<option value='" + rtn.files[f] + "'>" + rtn.files[f] + "</option>");
+                    }
+                }
+                $("#selfile").trigger("change");
+            })
+        })
+
+        $("#jstype").trigger("change");
+
+        $("#selfile").change(function () {
+            var v = $(this).val();
+            if (v) {
+                $("#filename").val(v.split(".")[0]);
+                $.Frame.Net.Ajax(g.remoteurl+"hostdev.getcode.go", "post", {
+                    file: $("#selfile").val(),
+                    filetype: $("#jstype").val()
+                }).then( function (rtn) {
+                    if (rtn.issuccess) {
+                        editor.setValue(decodeURIComponent(rtn.content.replace(/\+/g, '%20')));
+                    } else {
+                        $.Frame.Message.ShowMsg(rtn.msg);
+                    }
+                })
+            } else {
+                $("#filename").val("");
+            }
+        })
+
+        $("#btnCompile").click(function () {
+            var url = g.remoteurl + "hostdev.compile.go";
+
+            $.Frame.Net.Ajax(url, "post", {
+                file: $("#selfile").val(),
+                filetype: $("#jstype").val()
+            }).then(function (rtn) {
+                if (rtn.issuccess) {
+                    $("#result").val(rtn.msg);
+                    $.Frame.Message.ShowMsg("编译成功");
+                } else {
+                    $("#result").val(rtn.msg);
+                    $.Frame.Message.ShowMsg("编译失败，详情请查看信息提示");
+                }
+            })
+            
+        })
+        var savews;
+        $("#save").click(function () {
+            
+            DoSave();
+
+        })
+
+        function DoSave() {
+            return new Promise(function (resolve, reject) {
+                if ($("#filename").val() == "") {
+                    $.Frame.Message.ShowMsg("请输入文件名称");
+                    reject(null);
+                    return false;
+                }
+
+                var code = encodeURIComponent(editor.getValue());
+
+                $.Frame.Net.WS({
+                    url: g.remoteurl + "hostdev.save.go",
+                    onopen: function (ws) {
+                        $("#result").text("已连接");
+                        ws.Send({
+                            filename: $("#filename").val(),
+                            jstype: $("#jstype").val(),
+                            code: code
+                        })
+                    },
+                    onmessage: function (ws, data) {
+                        if (data.issuccess) {
+                            $("#tips").text("保存成功");
+                            ws.Close();
+                            var filename = $("#filename").val();
+                            var ext = $('#jstype').val() == "view" ? "html" : "js";
+                            if ($("#selfile").val() != filename + "." + ext) {
+                                $('#jstype').trigger('change');
+                            }
+                        } else {
+                            $.Frame.Message.ShowMsg(data.msg);
+                        }
+                    },
+                    onerror: function (ws, errorcode, errormsg) {
+                        $.Frame.Message.ShowMsg(errormsg);
+                        ws.Close();
+                        reject(null);
+                    },
+                    onclose: function () {
+                        $("#result").text($("#result").val() + "\n已关闭");
+                        $("#connect").enable(true);
+                        $("#closeconnect").enable(false);
+
+                        resolve(null);
+                    }
+                })
+            })
+        }
+
+        $("#del").click(function () {
+            $.Frame.Message.Dialog({
+                msg: "确定要删除“" + $("#filename").val() + "”吗？",
+                buttons: [{
+                    text: "确定", click: function () {
+                        $.Frame.Net.Ajax(g.remoteurl + "hostdev.del.go", "post", {
+                            filename: $("#filename").val(),
+                            jstype: $("#jstype").val()
+                        }).then(function (rtn) {
+                            $("#selfile").empty();
+                            if (rtn.files) {
+                                for (var f = 0; f < rtn.files.length; f++) {
+                                    $("#selfile").append("<option value='" + rtn.files[f] + "'>" + rtn.files[f] + "</option>");
+                                }
+                            }
+                            $('#jstype').trigger('change');
+                        })
+                    }
+                }, {
+                    text: "取消", click: function () {
+                        $(this).dialog("close");
+                    }
+                }]
+            })
+
+        })
+
+        $("#btnCompileAll").click(function () {
+            $.Frame.Net.WS({
+                url: g.remoteurl + "hostdev.compileall.go",
+                onopen: function (ws) {
+                    $("#result").val("已连接");
+                    ws.Send({
+                        projectname: $("#selproject").val()
+                    })
+                },
+                onmessage: function (ws, data) {
+                    if (Object.prototype.toString.call(data) === "[object String]") {
+                        $("#result").val($("#result").val() + "\n" + data);
+                    } else {
+                        if (data.issuccess) {
+                            ws.Close();
+                            $.Frame.Message.ShowMsg("编译成功");
+                        } else {
+                            $.Frame.Message.ShowMsg(data.msg);
+                        }
+                    }
+                },
+                onerror: function (ws, errorcode, errormsg) {
+                    $.Frame.Message.ShowMsg(errormsg);
+                    ws.Close();
+                },
+                onclose: function () {
+                    $("#result").val($("#result").val() + "\n已关闭");
+                }
+            })
+        })
+        var isprocess = false;
+        $("#btnDownCode").click(function () {
+            if (isprocess) {
+                $.Frame.Message.ShowMsg("正在处理中，请稍后再试");
+                return;
+            }
+            $.Frame.Net.WS({
+                url: g.remoteurl + "hostdev.publish.go",
+                onopen: function (ws) {
+                    $("#result").val("已连接");
+                    ws.Send({
+                        projectname: $("#selproject").val()
+                    });
+                    isprocess = true;
+                },
+                onmessage: function (ws, data) {
+                    if (Object.prototype.toString.call(data) === "[object String]") {
+                        $("#result").val($("#result").val() + "\n" + data);
+                    } else if (Object.prototype.toString.call(data) == "[object Blob]") {
+                        var aLink = document.createElement('a');
+                        var blob = data;
+                        var evt = document.createEvent("HTMLEvents");
+                        evt.initEvent("click", false, false);//initEvent 不加后两个参数在FF下会报错
+                        aLink.download = "publish.zip";
+                        aLink.href = URL.createObjectURL(blob);
+                        aLink.dispatchEvent(evt);
+                        aLink.click();
+                    } else {
+                        if (data.issuccess) {
+                            ws.Close();
+                            $.Frame.Message.ShowMsg("发布成功");
+                        } else {
+                            $.Frame.Message.ShowMsg(data.msg);
+                        }
+                    }
+                },
+                onerror: function (ws, errorcode, errormsg) {
+                    $.Frame.Message.ShowMsg(errormsg);
+                    ws.Close();
+                },
+                onclose: function () {
+                    $("#result").val($("#result").val() + "\n已关闭");
+                    isprocess = false;
+                }
+            })
+        })
+
+        $("#preview").click(function () {
+            if ($("#jstype").val() == "logic") {
+                if (parent) {
+                    var filename = $("#filename").val();
+                    var url = g.remoteurl + filename.split('.')[0] + ".hgo";
+
+                    parent.openwindow("/html/hostjs/remote_debug.html?u=" + $$.url.encode(url), "预览");
+                }
+            } else {
+                $.Frame.Message.ShowMsg("文件类型不支持预览");
+            }
+        })
+        $("#btnNew").click(function () {
+            var content = editor.getValue();
+            if (content != "") {
+                new Promise(function (resolve, reject) {
+                    $.Frame.Message.Dialog({
+                        msg: "发现您的代码不为空，需要先保存吗？",
+                        buttons: [{
+                            text: "保存", click: function () {
+                                DoSave().then(function () {
+                                    resolve(null);
+                                }).catch(function () {
+                                    reject(null);
+                                })
+                            }
+                        }, {
+                            text: "不保存", click: function () {
+                                $$.Message.Close();
+                                resolve(null);
+                            }
+                        }]
+                    })
+                }).then(function () {
+                    return $.Frame.Net.Ajax(g.remoteurl + "hostdev.newhost.go", "post", {
+                        filetype: $("#jstype").val()
+                    })
+                }).then(function (rtn) {
+                    if (rtn.issuccess) {
+                        $("#filename").val("new");
+                        editor.setValue(decodeURIComponent(rtn.content.replace(/\+/g, '%20')));
+                    } else {
+                        $.Frame.Message.ShowMsg(rtn.msg);
+                    }
+                })
+                
+            }
+
+            
+        })
+        
+
+        $(document).keyup(function (e) {
+            var e = window.event;
+            if (e.altKey && e.keyCode == "83") {
+                $("#save").trigger("click");
+            }
+        })
+    })
+</script>

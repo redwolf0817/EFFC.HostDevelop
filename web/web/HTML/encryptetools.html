@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <script src="/js/jquery-1.8.2.min.js"></script>
+    <script src="/js/FrameJs/global.js"></script>
+</head>
+<body>
+    <div>
+        <label>待加密字串：</label><input type="text" id="str" />
+    </div>
+    <div>
+        <label>AES秘钥：</label><input type="text" id="key" />
+    </div>
+    <div>
+        <input type="button" id="save" value="加密" />
+    </div>
+    <div>
+        <textarea id="result"></textarea>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    $(function (e) {
+        $("#save").click(function () {
+            $.Frame.Ajax2.Ajax("")
+        })
+    })
+</script>

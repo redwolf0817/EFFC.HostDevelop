@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link href="/css/common.css" rel="stylesheet" type="text/css" />
+    <link href="/css/rocket/jquery-wijmo.css" rel="stylesheet" type="text/css" />
+    <link href="/css/wijmo/jquery.wijmo.wijdialog.css" rel="stylesheet" type="text/css" />
+    <script src="/js/jQuery/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="/js/jQuery/jquery-ui-1.8.22.custom.min.js" type="text/javascript"></script>
+    <script src="/js/jQuery/jquery.wijmo.wijutil.min.js" type="text/javascript"></script>
+    <script src="/js/jQuery/jquery.wijmo.wijdialog.min.js" type="text/javascript"></script>
+    <script src="/js/imgReady.js" type="text/javascript"></script>
+    <script src="/js/FrameJs/global.js"></script>
+    <script type="text/javascript">
+        $(window).resize(function () {
+            setBodySize();
+        });
+        function setBodySize() {
+            $("body").height($(window).height()).width($(window).width());
+            $(".webbg img").width($(window).width());
+        }
+    </script>
+</head>
+<body>
+    <script>
+        $(document).ready(function () {
+            setBodySize();
+            $("#sortable").sortable();
+            $("#sortable").disableSelection();
+            //$("#dialog").wijdialog("destroy").remove();
+            $("#sortable li").click(function () {
+                $("body").append("<div id=\"" + $(this).attr("icon-name") + "\" title=\"" + $(this).find("p").text() + "\"></div>");
+                $("#" + $(this).attr("icon-name")).wijdialog({ width: 1200, height: 800, contentUrl: $(this).attr("url"), autoOpen: true });
+            });
+            if (!g.isconfig) {
+                $("#sortable li[icon-name='test0']").trigger("click");
+            }
+
+
+
+        });
+
+        function openwindow(url,title) {
+            $("#dialog").wijdialog({ width: 1200, height: 800, contentUrl: url, autoOpen: true, title: title });
+        }
+
+        
+    </script>
+    <div class="webbg">
+        <img src="images/webqqpic/cloud.jpg" />
+    </div>
+    <div class="main">
+        <div class="main-icon-list">
+            <ul id="sortable" class="ui-sortable">
+                <li class="mian-icon" icon-name="test0" url="html/hostjs/remote_config.html">
+                    <img src="images/icon/big (5).png" /><p>
+                        设置
+                    </p>
+                </li>
+                <li class="mian-icon" icon-name="test1" url="html/hostjs/remote_editor.html">
+                    <img src="images/icon/big (1).png" /><p>
+                        HostJs开发
+                    </p>
+                </li>
+                <li class="mian-icon" icon-name="test2" url="html/hostjs/remote_debug.html">
+                    <img src="/images/icon/11f.png" /><p>
+                        HostJs Debug
+                    </p>
+                </li>
+                <li class="mian-icon" icon-name="test3" url="html/hostjs/remote_helper.html">
+                    <img src="images/icon/big (2).png" /><p>
+                        HostJs帮助手册
+                    </p>
+                </li>
+            </ul>
+        </div>
+        <div class="chat"></div>
+    </div>
+    <div id="dialog" title="Basic dialog">
+    </div>
+    <div id="Div1" title="Basic dialog">
+    </div>
+</body>
+</html>

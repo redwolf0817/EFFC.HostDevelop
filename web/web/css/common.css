@@ -1,0 +1,64 @@
+﻿*
+{
+    padding: 0;
+    margin: 0;
+}
+html
+{
+    overflow: hidden;
+}
+body
+{
+    font-size: 12px;
+}
+ul li
+{
+    list-style: none;
+}
+.webbg
+{
+    position: absolute;
+    z-index: 1;
+}
+.webbg img
+{
+    min-width: 1024px;
+    min-height: 640px;
+}
+.main
+{
+    width: 236px;
+    position: relative;
+    z-index: 2;
+}
+.main .main-icon-list
+{
+    padding: 20px 0 0 20px;
+}
+.ui-sortable li
+{
+    margin: 3px 3px 3px 0;
+    padding: 10px;
+    float: left;
+    width: 66px;
+    height: 68px;
+    text-align: center;
+    cursor: pointer;
+}
+.ui-sortable li:hover
+{
+    background: url(../images/appbutton_mouseover_bg3.png) no-repeat center top;
+}
+.ui-sortable li img
+{
+    width: 50px;
+}
+.ui-sortable li p
+{
+    color: White;
+}
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default
+{
+    font-weight: normal /*{fwDefault}*/;
+    color: #555 /*{fcDefault}*/;
+}

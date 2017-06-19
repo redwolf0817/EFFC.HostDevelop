@@ -1,0 +1,87 @@
+﻿
+<style>
+    .codetitle {
+        border-left: 1px solid #09C;
+        padding: 5px;
+        margin: 3px auto 0px;
+        width: 640px;
+        background: #F2F6FB none repeat scroll 0% 0%;
+        clear: both;
+        font-size: 14px;
+        border-top: 1px solid #09C;
+        border-right: 1px solid #09C;
+        text-align: left;
+    }
+
+    .codebody {
+        border-width: 1px;
+        border-style: solid;
+        border-color: #09C;
+        padding: 10px;
+        margin: 0px auto 3px;
+        width: 640px;
+        background: #DDEDFB none repeat scroll 0% 0%;
+        clear: both;
+        font-size: 14px;
+        text-align: left;
+    }
+
+    p {
+        text-align: left;
+    }
+</style>
+
+<div class="content">
+    <div class="container">
+        <h3 class="sections-head">jquery tmpl 详解</h3>
+        <div style="height:800px;border:1px solid #ccc">
+            <p>1.引入脚本<br></p>
+            <div class="codetitle">
+                代码如下:
+            </div>
+            <div class="codebody"><br>&lt;script src="~/Scripts/jquery.tmpl.js"&gt;&lt;/script&gt;</div>
+
+            <p>2.编写模板<br></p>
+
+
+            <div class="codetitle">
+                后台json格式发送来的数据:
+            </div>
+            <div class="codebody">
+                [{"tId":1,"tName":"张三","tAge":14,"tClass":1,"TeachClass":{"cId":1,"cName":"1班"}},
+            </div>
+
+            <div class="codetitle">
+                模板代码如下:
+            </div>
+            <div class="codebody">
+                &lt;script type="text/x-jquery-tmpl" id="testTemplate"&gt;<br />
+                &lt;tr&gt; <br />
+                &nbsp;&nbsp;&lt;td&gt;${tid} &lt;/td&gt;<br />
+                &nbsp;&nbsp;&lt;td&gt;${tName} &lt;/td&gt;<br />
+                &nbsp;&nbsp;&lt;td&gt;${tAge} &lt;/td&gt;<br />
+                &nbsp;&nbsp;&lt;td&gt;${teachClass.cName} &lt;/td&gt;<br />
+                &lt;/tr&gt; <br />
+                &lt;/script&gt;<br>
+            </div>
+
+
+            <p>3.填写模板</p>
+            <label>按照上面的假设，后台返回的是一个json格式的字符串，那么通过ajax请求，并填写 模板</label>
+            <div class="codetitle">
+                代码如下:
+            </div>
+            <div class="codebody">
+                &lt;script &gt;<br />
+                $(function(){ <br />
+                $.getJson("/Home/List",null,function(jsonData){<br />
+                $("#testTemplate").tmpl(jsonData).appendTo("#List");<br />
+                &nbsp;&nbsp;});<br />
+                });<br />
+                &lt;/script&gt;<br>
+            </div>
+
+        </div>
+
+    </div>
+</div>

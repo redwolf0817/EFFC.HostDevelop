@@ -1,0 +1,754 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>编辑器</title>
+    <link href="/js/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/js/Layoutit_runoob/css/layoutit.css" rel="stylesheet" />
+    <link href="/js/bootstrap-3.3.7-dist/css/bootstrap-select.min.css" rel="stylesheet" />
+    <link href="/js/bootstrap-3.3.7-dist/css/BootSideMenu.css" rel="stylesheet" />
+    <link href="/js/bootstrap-3.3.7-dist/css/bootstrap-treeview.css" rel="stylesheet" />
+    <style>
+        div.br {
+            min-height: 10px;
+            max-height: 15px;
+        }
+    </style>
+</head>
+<body style="margin-left:5px">
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="col-lg-12">
+                <div class="tabbable" id="tabs-270918">
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a href="#panel-131251" data-toggle="tab">Host Js</a>
+                        </li>
+                        <li>
+                            <a href="#panel-483140" data-toggle="tab">资源设定</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="panel-131251">
+                            <p>
+                                <div class="row-fluid">
+                                    <div class="col-lg-2">
+                                        <div id="devtree"></div>
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <div class="row-fluid">
+                                            <div class="col-sm-12">
+                                                <select id="jstype" class="selectpicker">
+                                                    <option value="view" selected="selected">View</option>
+                                                    <option value="logic">Logic</option>
+                                                </select>
+                                                <div class="br"></div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row-fluid">
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control text-left" id="filename" />
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <div class="btn-group">
+                                                    <button class="btn btn-primary btn-large" type="button" id="btnNew">新建</button>
+                                                    <button class="btn btn-success btn-large" type="button" id="save">保存</button>
+                                                    <button class="btn btn-warning btn-large" type="button" id="del">删除</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row-fluid">
+                                            <div class="col-sm-12">
+                                                <div class="br"></div>
+                                                <hr />
+                                            </div>
+                                        </div>
+                                        <div class="row-fluid">
+                                            <div class="col-sm-10">
+                                                <div class="btn-group">
+                                                    <button class="btn btn-primary" type="button" id="btnCompile">编译</button>
+                                                    <button class="btn btn-primary" type="button" id="btnCompileAll">编译所有文件</button>
+                                                    <button class="btn btn-primary" type="button" id="btnDownCode">下载源码</button>
+                                                    <button class="btn btn-primary" type="button" id="preview">Debug</button>
+                                                </div>
+                                                <div class="br"></div>
+                                                <div id="code" style="width:100%;min-height:700px; font-size:14px;resize:both;overflow:auto"></div>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <div class="form-group-lg">
+                                                    <label>信息提示</label>
+                                                    <label id="tips" style="font:bold 14px arial;color:green"></label>
+                                                    <div class="br"></div>
+                                                    <textarea id="result" readonly="readonly" style="width:95%" class="form-control" rows="10"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </p>
+                        </div>
+                        <div class="tab-pane" id="panel-483140">
+                            <p>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="row">
+                                            <div class="col-lg-2">
+                                                <button class="btn btn-danger" id="re_delete">删除</button>
+                                                <div class="br"></div>
+                                                <div id="tree"></div>
+                                            </div>
+                                            <div class="col-lg-10">
+                                                <div class="row-fluid row">
+                                                    <div class="col-sm-2">
+                                                        <select id="resourcetype" class="selectpicker">
+                                                            <option value="~/">站点根路径</option>
+                                                            <option value="~/js/">站点Js路径</option>
+                                                            <option value="~/css/">站点Css路径</option>
+                                                            <option value="~/images/">站点Image路径</option>
+                                                            <option value="~/HTML/">站点HTML路径</option>
+                                                            <option value="%host%/">HostJs根路径</option>
+                                                            <option value="%host%/">HostJs公共资源路径</option>
+                                                            <option value="%host%/views/">HostJs View路径</option>
+                                                            <option value="%host%/logics/">HostJs Logic路径</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-sm-10">
+                                                        <div class="col-sm-10">
+                                                            <input type="text" id="uploadpath" class="form-control" />
+                                                        </div>
+                                                        <div class="col-sm-2">
+                                                            <img src="/images/icon/16r.png" style="width:25px;height:25px" data-toggle="tooltip"
+                                                                 title="可以从前面选项中选择路径，也可以自己写路径；~或%web%：表示站点根路径，%host%：表示HostJs的根路径" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="br"></div>
+                                                <div class="row-fluid row">
+                                                    <div class="col-sm-10">
+                                                        <input type="file" id="myfile" multiple="multiple" class="filestyle" />
+                                                        <label>Zip会被解压，其余类型文件直接保存到对应目录</label>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <button id="doupload" class="btn btn-primary btn-large">上传资源文件</button>
+                                                    </div>
+                                                </div>
+                                                <hr />
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div id="showreeditor" style="display: none">
+                                                            <select id="retheme" class="selectpicker">
+                                                                <option value="ambiance">ambiance</option>
+                                                                <option value="chaos">chaos</option>
+                                                                <option value="chrome">chrome</option>
+                                                                <option value="clouds">clouds</option>
+                                                                <option value="clouds_midnight">clouds_midnight</option>
+                                                                <option value="cobalt">cobalt</option>
+                                                                <option value="crimson_editor">crimson_editor</option>
+                                                                <option value="dawn">dawn</option>
+                                                                <option value="dreamweaver">dreamweaver</option>
+                                                                <option value="eclipse">eclipse</option>
+                                                                <option value="github">github</option>
+                                                                <option value="idle_fingers">idle_fingers</option>
+                                                                <option value="iplastic">iplastic</option>
+                                                                <option value="katzenmilch">katzenmilch</option>
+                                                                <option value="kr_theme">kr_theme</option>
+                                                                <option value="kuroir">kuroir</option>
+                                                                <option value="merbivore">merbivore</option>
+                                                                <option value="mono_industrial">mono_industrial</option>
+                                                                <option value="monokai">monokai</option>
+                                                                <option value="pastel_on_dark">pastel_on_dark</option>
+                                                                <option value="solarized_dark">solarized_dark</option>
+                                                                <option value="solarized_light">solarized_light</option>
+                                                                <option value="sqlserver">sqlserver</option>
+                                                                <option value="terminal">terminal</option>
+                                                                <option value="textmate">textmate</option>
+                                                                <option value="tomorrow">tomorrow</option>
+                                                                <option value="tomorrow_night">tomorrow_night</option>
+                                                                <option value="tomorrow_night_blue">tomorrow_night_blue</option>
+                                                                <option value="tomorrow_night_bright">tomorrow_night_bright</option>
+                                                                <option value="tomorrow_night_eighties">tomorrow_night_eighties</option>
+                                                                <option value="twilight">twilight</option>
+                                                                <option value="vibrant_ink">vibrant_ink</option>
+                                                                <option value="xcode">xcode</option>
+                                                            </select>
+                                                            <button class="btn btn-primary" id="resave">保存</button>
+                                                            <div id="recode" style="width:100%;height:600px;font-size:14px;"></div>
+                                                        </div>
+                                                        <img id="reimg" style="display:none" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/jquery-1.11.3.js"></script>
+    <script src="/js/FrameJs/global.js"></script>
+    <script src="/js/ACEEditor/ace.js"></script>
+    <script src="/js/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+    <script src="/js/bootstrap-3.3.7-dist/js/bootstrap-select.min.js"></script>
+    <script src="/js/bootstrap-3.3.7-dist/js/bootstrap-filestyle.min.js"></script>
+    <script src="/js/bootstrap-3.3.7-dist/js/BootSideMenu.js"></script>
+    <script src="/js/bootstrap-3.3.7-dist/js/bootstrap-treeview.js"></script>
+</body>
+</html>
+
+<script type="text/javascript">
+    var curfiletype = "view";
+    var editor;
+    var reeditor
+    var re_waiting_delete = [];
+    var currepath = "";
+    var curdevdata = {
+        filename: "",
+        relativepath: "",
+        filetype: ""
+    }
+
+    $(function () {
+        document.onkeydown = function (e) {
+            e = e || window.event;
+            kc = e.keyCode || e.charCode;
+            if ((kc == 83 && e.ctrlKey)) {
+                e.preventDefault();
+                $("#save").trigger("click");
+            }
+        }
+
+        if (!g.isconfig_show) {
+            return false;
+        }
+        editor = ace.edit("code");
+        editor.setTheme("ace/theme/" + g.editor_theme);
+
+        reeditor = ace.edit("recode");
+        $("#retheme").val(g.editor_theme);
+
+        init_tab1_left();
+
+        $("a[href='#panel-483140']").click(function () {
+            tab2_left_init();
+        })
+
+        $("#retheme").change(function () {
+            reeditor.setTheme("ace/theme/" + $(this).val());
+        })
+
+        $("#retheme").trigger("change");
+
+        $("#resourcetype").change(function () {
+            $("#uploadpath").val(this.value);
+        })
+
+        $("#doupload").bind("click", function () {
+            if (document.getElementById("myfile").files.length <= 0) {
+                $.Frame.Message.ShowMsg("请选择要上传的文件");
+                return;
+            }
+            if ($("#uploadpath").val() == "") {
+                $.Frame.Message.ShowMsg("请输入目标路径");
+                return;
+            }
+            var data = {
+                path: $("#uploadpath").val(),
+                filecount: document.getElementById("myfile").files.length,
+            }
+            for (var i = 0; i < document.getElementById("myfile").files.length; i++) {
+                data["myfile" + i] = document.getElementById("myfile").files[i];
+            }
+            $.Frame.Net.Ajax(g.remoteurl + "hostdev.uploadresource.go", "post", data, "json", {
+                "Content-Type": $.Frame.ContentType.MultiPart
+            }).then(function (rtn) {
+                $.Frame.Message.ShowMsg(rtn.msg);
+                tab2_left_init();
+            }).catch(function (rtn) {
+                $.Frame.Message.ShowMsg(rtn.errorMsg);
+            })
+        })
+
+        $("#resourcetype").trigger("change");
+
+        $("#jstype").change(function () {
+            if (editor.getValue() != "") {
+                $$.Message.Dialog({
+                    msg: "请确保您的代码都已经保存，否则会被清空",
+                    buttons: [
+                        {
+                            text: "已保存",
+                            click: function () {
+                                curfiletype = $("#jstype").val();
+                                editor.setValue("");
+                                $("#filename").val("");
+
+                            }
+                        },
+                        {
+                            text: "未保存",
+                            click: function () {
+                                $("#jstype").selectpicker("val", curfiletype);
+                            }
+                        }
+                    ]
+                })
+            } else {
+                curfiletype = $("#jstype").val();
+                editor.setValue("");
+                $("#filename").val("");
+            }
+
+        })
+
+
+        $("#jstype").trigger("change");
+
+        $("#filename").change(function () {
+            curdevdata.filename = $("#filename").val();
+            curdevdata.filetype = $("#jstype").val();
+            if (["view"].contains(curdevdata.filetype)) {
+                curdevdata.relativepath = curdevdata.filename + ".html";
+            } else if (curdevdata.filetype === "logic") {
+                curdevdata.relativepath = curdevdata.filename + ".js";
+            }
+        })
+
+        $("#btnCompile").click(function () {
+            var url = g.remoteurl + "hostdev.compile.go";
+            if (["view", "logic"].contains($("#jstype").val())) {
+                var filename = $("#filename").val() + ($("#jstype").val() == "view" ? ".html" : ".js");
+                //if (filename == "") {
+                //    filename = $("#panel-131251 li.node-selected").text();
+                //}
+                $.Frame.Net.Ajax(url, "post", {
+                    file: filename,
+                    filetype: $("#jstype").val()
+                }).then(function (rtn) {
+                    if (rtn.issuccess) {
+                        $("#result").val(rtn.msg);
+                        $.Frame.Message.ShowMsg("编译成功");
+                    } else {
+                        $("#result").val(rtn.msg);
+                        $.Frame.Message.ShowMsg("编译失败，详情请查看信息提示");
+                    }
+                })
+            } else {
+                $.Frame.Message.ShowMsg("此类型文件无须编译");
+            }
+
+        })
+        var savews;
+        $("#save").click(function () {
+
+            DoSave();
+            init_tab1_left();
+        })
+
+        function DoSave() {
+            return new Promise(function (resolve, reject) {
+                if ($("#filename").val() == "") {
+                    $.Frame.Message.ShowMsg("请输入文件名称");
+                    reject(null);
+                    return false;
+                } else {
+                    curdevdata.filename = $("#filename").val();
+                }
+
+                var code = encodeURIComponent(editor.getValue());
+
+                $.Frame.Net.WS({
+                    url: g.remoteurl + "hostdev.save.go",
+                    onopen: function (ws) {
+                        $("#result").text($("#result").val() + ($("#result").val() == "" ? "" : "\n") + "已连接");
+                        ws.Send({
+                            filename: curdevdata.filename,
+                            filepath: curdevdata.relativepath,
+                            jstype: curdevdata.filetype,
+                            code: code
+                        })
+                    },
+                    onmessage: function (ws, data) {
+                        if (data.issuccess) {
+                            $("#tips").text("保存成功");
+                            $("#result").text($("#result").val() + "\n保存成功")
+                            ws.Close();
+                            init_tab1_left();
+                        } else {
+                            $.Frame.Message.ShowMsg(data.msg);
+                        }
+                    },
+                    onerror: function (ws, errorcode, errormsg) {
+                        $.Frame.Message.ShowMsg(errormsg);
+                        ws.Close();
+                        reject(null);
+                    },
+                    onclose: function () {
+                        $("#result").text($("#result").val() + "\n已关闭");
+                        $("#connect").enable(true);
+                        $("#closeconnect").enable(false);
+
+                        resolve(null);
+                    }
+                })
+            })
+        }
+
+        $("#del").click(function () {
+            $.Frame.Message.Dialog({
+                msg: "确定要删除“" + $("#filename").val() + "”吗？",
+                buttons: [{
+                    text: "确定", click: function () {
+                        $.Frame.Net.Ajax(g.remoteurl + "hostdev.del.go", "post", {
+                            filename: $("#filename").val(),
+                            jstype: $("#jstype").val()
+                        }).then(function (rtn) {
+                            $("#selfile").empty();
+                            if (rtn.files) {
+                                for (var f = 0; f < rtn.files.length; f++) {
+                                    $("#selfile").append("<option value='" + rtn.files[f] + "'>" + rtn.files[f] + "</option>");
+                                }
+                            }
+                            init_tab1_left();
+                            $('#jstype').trigger('change');
+                        })
+                    }
+                }, {
+                    text: "取消", click: function () {
+                        $(this).dialog("close");
+                    }
+                }]
+            })
+
+        })
+
+        $("#btnCompileAll").click(function () {
+            $.Frame.Net.WS({
+                url: g.remoteurl + "hostdev.compileall.go",
+                onopen: function (ws) {
+                    $("#result").val("已连接");
+                    ws.Send({
+                        projectname: $("#selproject").val()
+                    })
+                },
+                onmessage: function (ws, data) {
+                    if (Object.prototype.toString.call(data) === "[object String]") {
+                        $("#result").val($("#result").val() + "\n" + data);
+                    } else {
+                        if (data.issuccess) {
+                            ws.Close();
+                            $.Frame.Message.ShowMsg("编译成功");
+                        } else {
+                            $.Frame.Message.ShowMsg(data.msg);
+                        }
+                    }
+                },
+                onerror: function (ws, errorcode, errormsg) {
+                    $.Frame.Message.ShowMsg(errormsg);
+                    ws.Close();
+                },
+                onclose: function () {
+                    $("#result").val($("#result").val() + "\n已关闭");
+                }
+            })
+        })
+        var isprocess = false;
+        $("#btnDownCode").click(function () {
+            if (isprocess) {
+                $.Frame.Message.ShowMsg("正在处理中，请稍后再试");
+                return;
+            }
+            $.Frame.Net.WS({
+                url: g.remoteurl + "hostdev.publish.go",
+                onopen: function (ws) {
+                    $("#result").val("已连接");
+                    ws.Send({
+                        projectname: $("#selproject").val()
+                    });
+                    isprocess = true;
+                },
+                onmessage: function (ws, data) {
+                    if (Object.prototype.toString.call(data) === "[object String]") {
+                        $("#result").val($("#result").val() + "\n" + data);
+                    } else if (Object.prototype.toString.call(data) == "[object Blob]") {
+                        var aLink = document.createElement('a');
+                        var blob = data;
+                        var evt = document.createEvent("HTMLEvents");
+                        evt.initEvent("click", false, false);//initEvent 不加后两个参数在FF下会报错
+                        aLink.download = "publish.zip";
+                        aLink.href = URL.createObjectURL(blob);
+                        aLink.dispatchEvent(evt);
+                        aLink.click();
+                    } else {
+                        if (data.issuccess) {
+                            ws.Close();
+                            $.Frame.Message.ShowMsg("发布成功");
+                        } else {
+                            $.Frame.Message.ShowMsg(data.msg);
+                        }
+                    }
+                },
+                onerror: function (ws, errorcode, errormsg) {
+                    $.Frame.Message.ShowMsg(errormsg);
+                    ws.Close();
+                },
+                onclose: function () {
+                    $("#result").val($("#result").val() + "\n已关闭");
+                    isprocess = false;
+                }
+            })
+        })
+
+        $("#preview").click(function () {
+            if (parent) {
+                parent.openwindow("/html/hostjs/remote_debug.html?", "Debug");
+            }
+        })
+        $("#btnNew").click(function () {
+            var content = editor.getValue();
+
+            jstype_check();
+            if (content != "") {
+                new Promise(function (resolve, reject) {
+                    $$.Message.Dialog("发现您的代码不为空，需要先保存吗？").addButton({
+                        text: "保存",
+                        click: function () {
+                            DoSave().then(function () {
+                                resolve(null);
+                            }).catch(function () {
+                                reject(null);
+                            })
+                        }
+                    }).addButton({
+                        text: "不保存",
+                        click: function () {
+                            $$.Message.Close();
+                            resolve(null);
+                        }
+                    })
+                }).then(function () {
+                    return $$.Net.Ajax(g.remoteurl + "hostdev.newhost.go", "post", {
+                        filetype: curfiletype
+                    })
+                }).then(function (rtn) {
+                    if (rtn.issuccess) {
+                        curdevdata.filename = "new";
+                        curdevdata.filetype = $("#jstype").val();
+                        if (["view"].contains(curdevdata.filetype)) {
+                            curdevdata.relativepath = curdevdata.filename + ".html";
+                        } else if (curdevdata.filetype === "logic") {
+                            curdevdata.relativepath = curdevdata.filename + ".js";
+                        }
+
+                        $("#filename").val(curdevdata.filename);
+
+                        editor.setValue(decodeURIComponent(rtn.content.replace(/\+/g, '%20')));
+                    } else {
+                        $.Frame.Message.ShowMsg(rtn.msg);
+                    }
+                })
+
+            } else {
+                $.Frame.Net.Ajax(g.remoteurl + "hostdev.newhost.go", "post", {
+                    filetype: curfiletype
+                }).then(function (rtn) {
+                    if (rtn.issuccess) {
+                        curdevdata.filename = "new";
+                        curdevdata.filetype = $("#jstype").val();
+                        if (["view"].contains(curdevdata.filetype)) {
+                            curdevdata.relativepath = curdevdata.filename + ".html";
+                        } else if (curdevdata.filetype === "logic") {
+                            curdevdata.relativepath = curdevdata.filename + ".js";
+                        }
+
+                        $("#filename").val(curdevdata.filename);
+                        editor.setValue(decodeURIComponent(rtn.content.replace(/\+/g, '%20')));
+                    } else {
+                        $.Frame.Message.ShowMsg(rtn.msg);
+                    }
+                })
+            }
+
+
+        })
+
+        $("#re_delete").click(function () {
+            if (re_waiting_delete.length <= 0) {
+                $$.Message.ShowMsg("请选择要删除的资源文件！（根路径不可删除）");
+                return;
+            }
+
+            $$.Message.ShowConfirm("确定要删除吗？").ok(function () {
+                console.debug("deleted files:" + re_waiting_delete);
+                $$.Net.Ajax(g.remoteurl + "hostdev.delre.go", "post", {
+                    deletedlist: re_waiting_delete.toStringBy(",")
+                }).then(function (rtn) {
+                    $$.Message.ShowMsg(rtn.msg);
+                    tab2_left_init();
+                })
+            })
+        })
+
+        $("#resave").click(function () {
+            if (reeditor.getValue() != "") {
+                $$.Net.Ajax(g.remoteurl + "hostdev.savere.go", "post", {
+                    repath: currepath,
+                    content: $$.base64Encode(reeditor.getValue())
+                }).then(function (rtn) {
+                    $$.Message.ShowMsg(rtn.msg);
+                }).catch(function (err) {
+                    $$.Message.ShowMsg(err.errorMsg);
+                })
+            }
+        })
+
+        $(document).keyup(function (e) {
+            var e = window.event;
+            if (e.altKey && e.keyCode == "83") {
+                $("#save").trigger("click");
+            }
+        })
+
+    })
+    function jstype_check() {
+        if (["view"].contains(curfiletype)) {
+            editor.getSession().setMode("ace/mode/html");
+        } else if ("css" === curfiletype) {
+            editor.getSession().setMode("ace/mode/css");
+        } else {
+            editor.getSession().setMode("ace/mode/javascript");
+        }
+    }
+
+    function init_tab1_left() {
+        $$.Net.Ajax(g.remoteurl + "hostdev.listvl.go", "post").then(function (rtn) {
+            var treedata = [
+                buildTreeData(rtn.views)
+                ,
+                buildTreeData(rtn.logics)
+            ]
+
+            $("#devtree").treeview({
+                bootstrap2: false,
+                showTags: true,
+                levels: 5,
+                data: treedata,
+                showCheckbox: false
+            }).treeview('collapseAll', { silent: true })
+                .on("nodeSelected", function (event, data) {
+                    if (!data.href || data.href === "#") return;
+                    currepath = data.href;
+                    $$.Net.Ajax(g.remoteurl + "hostdev.getcode.go", "post", {
+                        file: currepath,
+                        filetype: data.type
+                    }).then(function (rtn) {
+                        curdevdata.filename = data.text.split(".")[0];
+                        curdevdata.filetype = data.type;
+                        curdevdata.relativepath = data.href;
+
+                        $("#filename").val(curdevdata.filename);
+                        curfiletype = curdevdata.filetype;
+                        $("#jstype").selectpicker("val", curfiletype);
+                        jstype_check();
+                        if (rtn.issuccess) {
+                            editor.setValue($$.url.decode(rtn.content.replace(/\+/g, '%20')));
+
+                        } else {
+                            $.Frame.Message.ShowMsg(rtn.msg);
+                        }
+                    })
+                })
+        }).catch(function (rtn) {
+            $$.Message.ShowMsg(rtn.errorMsg);
+        })
+    }
+
+    function tab2_left_init() {
+        $$.Net.Ajax(g.remoteurl + "hostdev.listre.go").then(function (rtn) {
+            var treedata = [
+                buildTreeData(rtn.image)
+                ,
+                buildTreeData(rtn.css)
+                ,
+                buildTreeData(rtn.script)
+                ,
+                buildTreeData(rtn.html)
+            ]
+
+            $("#tree").treeview({
+                bootstrap2: false,
+                showTags: true,
+                levels: 5,
+                data: treedata,
+                showCheckbox: true
+            }).treeview('collapseAll', { silent: true }).on("nodeSelected", function (event, data) {
+                if (!data.href || data.href === "#") return;
+                currepath = data.href;
+                $$.Net.Ajax(g.remoteurl + "hostdev.getre.go", "post", {
+                    repath: data.href
+                }).then(function (rtn) {
+                    if (rtn.issuccess) {
+                        if ("js,css,map,txt,html".split(",").contains(rtn.file.type)) {
+                            $("#reimg").hide();
+                            $("#showreeditor").show();
+
+                            if ("js" === rtn.file.type) {
+                                reeditor.getSession().setMode("ace/mode/javascript");
+                            } else if ("css" === rtn.file.type) {
+                                reeditor.getSession().setMode("ace/mode/css");
+                            } else {
+                                reeditor.getSession().setMode("ace/mode/html");
+                            }
+                            reeditor.setValue($$.base64Decode(rtn.file.content));
+
+                        } else {
+                            $("#showreeditor").hide();
+
+                            $("#reimg").show().attr("src", rtn.file.content);
+                        }
+                    } else {
+                        $$.Message.ShowMsg(rtn.msg);
+                    }
+                })
+            }).on("nodeChecked", function (event, data) {
+                re_waiting_delete.append(data.href);
+            }).on("nodeUnchecked", function (event, data) {
+                re_waiting_delete.remove(data.href);
+            })
+        })
+
+    }
+
+    function buildTreeData(node) {
+        var rtn = {
+            text: node.text,
+            href: node.relativepath ? node.relativepath : "#",
+            type: node.type ? node.type : "",
+            selectable: true
+        }
+        if (node.nodes) {
+            rtn.nodes = [];
+            for (var i = 0; i < node.nodes.length; i++) {
+                rtn.nodes[i] = buildTreeData(node.nodes[i]);
+            }
+        }
+
+        return rtn;
+    }
+
+
+</script>
