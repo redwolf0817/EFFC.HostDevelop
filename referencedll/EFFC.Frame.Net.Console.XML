@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>EFFC.Frame.Net.Console</name>
+    </assembly>
+    <members>
+        <member name="P:EFFC.Frame.Net.Consoles.Global.GlobalCommon.Logger">
+            <summary>
+            Logger
+            </summary>
+        </member>
+        <member name="P:EFFC.Frame.Net.Consoles.Global.GlobalCommon.ExceptionProcessor">
+            <summary>
+            異常處理
+            </summary>
+        </member>
+        <member name="P:EFFC.Frame.Net.Consoles.Global.GlobalCommon.ConsoleCommon.LogicAssemblyPath">
+            <summary>
+            Business呼叫的Logic的AssemblyPath
+            </summary>
+        </member>
+        <member name="T:EFFC.Frame.Net.Console.Proxy.ConsoleBusinessProxy">
+            <summary>
+            多实例多线程业务模块请求代理
+            </summary>
+        </member>
+        <member name="T:EFFC.Frame.Net.Console.Proxy.ConsoleBusinessSingletonProxy">
+            <summary>
+            单实例多线程业务模块请求代理
+            </summary>
+        </member>
+    </members>
+</doc>

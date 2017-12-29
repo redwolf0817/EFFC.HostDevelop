@@ -1,0 +1,282 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>EFFC.Frame.Net.Web</name>
+    </assembly>
+    <members>
+        <member name="P:EFFC.Frame.Net.Web.Core.WebBaseHandler`2.IsAjaxAsync">
+            <summary>
+            判断是否为ajax异步调用
+            </summary>
+        </member>
+        <member name="P:EFFC.Frame.Net.Web.Core.WebBaseHandler`2.IsWebSocket">
+            <summary>
+            是否为websocket请求
+            </summary>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.Core.PageBase.BeforeEventRaise(System.Web.UI.IPostBackEventHandler,System.String)">
+            <summary>
+            当页面事件发生时
+            </summary>
+            <param name="sourceControl"></param>
+            <param name="eventArgument"></param>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.Core.PageBase.AfterEventRaise(System.Web.UI.IPostBackEventHandler,System.String)">
+            <summary>
+            当页面事件发生之後
+            </summary>
+            <param name="sourceControl"></param>
+            <param name="eventArgument"></param>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.Core.PageBase.RegisterAutoProcess(System.Web.UI.Control)">
+            <summary>
+            注册自动执行控件
+            </summary>
+            <param name="c"></param>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.Core.PageBase.RegisterWebControlDataMap(System.Web.UI.Control)">
+            <summary>
+            提供给控件进行注册使用
+            </summary>
+            <typeparam name="T">Control,IWebControl</typeparam>
+            <param name="c"></param>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.Core.PageBase.RegisterWebControlGlobalizationMap(System.Web.UI.Control)">
+            <summary>
+            提供给需要全球化控件进行注册使用
+            </summary>
+            <typeparam name="T">Control,IWebControl</typeparam>
+            <param name="c"></param>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.Core.PageBase.RegisterSpecialControl(System.Web.UI.Control)">
+            <summary>
+            提供给特殊控件进行注册使用
+            </summary>
+            <typeparam name="T">Control,IWebControl</typeparam>
+            <param name="c"></param>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.Core.PageBase.RegisterWebControlPermission(System.Web.UI.Control)">
+            <summary>
+            提供给控件进行注册使用
+            </summary>
+            <param name="c">Control,IActionPermission</param>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.Core.PageBase.FindControls(System.Web.UI.Control)">
+            <summary>
+            搜索頁面裏面的控件并添加到字典中
+            </summary>
+            <param name="contrainer"></param>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.Core.PageBase.GetModule">
+            <summary>
+            获取本页面的数据Module，1.0.0.1版本中使用
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.Core.PageBase.SetPageModelValue(EFFC.Frame.Net.Data.WebData.WebFormPageModel)">
+            <summary>
+            根据module的值往页面写数据
+            </summary>
+            <param name="module"></param>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.Core.PageBase.SetPageModelValue">
+            <summary>
+            根据module的值往页面写数据
+            </summary>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.Core.PageBase.SetPageDataBind(EFFC.Frame.Net.Data.WebData.WebFormPageModel)">
+            <summary>
+            根据module的值进行数据绑定
+            </summary>
+            <param name="model"></param>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.Core.PageBase.SetPageDataBind">
+            <summary>
+            根据module的值进行数据绑定
+            </summary>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.Core.PageBase.GetControlValue(System.Web.UI.Control)">
+            <summary>
+            获取控件的值
+            </summary>
+            <param name="c"></param>
+            <returns></returns>
+        </member>
+        <member name="P:EFFC.Frame.Net.Web.Core.PageBase.WebParameters">
+            <summary>
+            页面参数
+            </summary>
+        </member>
+        <member name="P:EFFC.Frame.Net.Web.Core.PageBase.WebData">
+            <summary>
+            页面进过处理后的数据
+            </summary>
+        </member>
+        <member name="P:EFFC.Frame.Net.Web.Core.PageBase.PageName">
+            <summary>
+            当前页面的名称
+            </summary>
+        </member>
+        <member name="T:EFFC.Frame.Net.Web.Core.WMcvBaseHandler`2">
+            <summary>
+            WITS.Frame2中的MVC框架处理器，用于处理后缀为view的请求。请求格式为Logic.action.view
+            </summary>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.Log.Log4Net.WriteLog(System.String)">
+            <summary>
+            ?庹
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="T:EFFC.Frame.Net.Web.ViewEngine.ViewDocument">
+            <summary>
+            View文档
+            </summary>
+        </member>
+        <member name="T:EFFC.Frame.Net.Web.ViewEngine.HostViewTagModule">
+            <summary>
+            hostjs view的tag解析module
+            </summary>
+        </member>
+        <member name="T:EFFC.Frame.Net.Web.ViewEngine.HjsTag">
+            <summary>
+            Hjs标签
+            </summary>
+        </member>
+        <member name="T:EFFC.Frame.Net.Web.ViewEngine.OutTag">
+            <summary>
+            out标签
+            </summary>
+        </member>
+        <member name="T:EFFC.Frame.Net.Web.ViewEngine.HostJsView">
+            <summary>
+            Host Js的View引擎
+            该引擎会将标签页面转化成hostjs文件，然后通过hostjs引擎进行输出view的html
+            </summary>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.ViewEngine.HostJsView.Compile(System.String,System.String,System.Boolean)">
+            <summary>
+            将源码编译成js代码
+            </summary>
+            <param name="filename">文件名称</param>
+            <param name="source">源码</param>
+            <param name="isCreateFile">是否产生编译后的文件,如果产生文件，则文件产生的目录为Host的根路径下的Compiled/View/</param>
+            <param name="outfilepath">产生编译后的js文件的存放路径，只有在isCreateFile=true的时候有效</param>
+            <returns></returns>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.ViewEngine.HostJsView.DeleteAllCompiledFile">
+            <summary>
+            删除已经编译好的所有文件
+            </summary>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.ViewEngine.HostJsView.Render(System.String)">
+            <summary>
+            将js代码渲染成html
+            </summary>
+            <param name="js"></param>
+            <returns></returns>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.ViewEngine.HostJsView.Render(System.String,EFFC.Frame.Net.Web.ViewEngine.HostViewContext)">
+            <summary>
+            根据指定的上下文结构执行View渲染
+            </summary>
+            <param name="js"></param>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.ViewEngine.HostJsView.GetConsoleMsg">
+            <summary>
+            获取控制台的信息
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:EFFC.Frame.Net.Web.ViewEngine.HostJsView.CurrentContext">
+            <summary>
+            当前上下文
+            </summary>
+        </member>
+        <member name="P:EFFC.Frame.Net.Web.ViewEngine.HostJsView.ReserveKeys">
+            <summary>
+            Logic Js的保留关键字
+            </summary>
+        </member>
+        <member name="P:EFFC.Frame.Net.Web.ViewEngine.HostJsView.ServerReserverObjectKey">
+            <summary>
+            服务器保留对象
+            </summary>
+        </member>
+        <member name="P:EFFC.Frame.Net.Web.ViewEngine.HostJsView.ReserverTags">
+            <summary>
+            服务器保留标签
+            </summary>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.ViewEngine.HostViewContext.AddTag(EFFC.Frame.Net.Tag.Core.ITagParser)">
+            <summary>
+            添加一个tag
+            </summary>
+            <param name="tag"></param>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.ViewEngine.HostViewContext.GetTag(System.String)">
+            <summary>
+            根据tag的名称获取一个tag
+            </summary>
+            <param name="tagname"></param>
+            <returns></returns>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.ViewEngine.HostViewContext.AddHostJsObject(EFFC.Frame.Net.Base.ResouceManage.JsEngine.BaseHostJsObject)">
+            <summary>
+            添加一个hostjs对象
+            </summary>
+            <param name="obj"></param>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.ViewEngine.HostViewContext.SetHostJsObject(EFFC.Frame.Net.Base.ResouceManage.JsEngine.BaseHostJsObject)">
+            <summary>
+            添加一个对象，有则更新，没有则新增
+            </summary>
+            <param name="obj"></param>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.ViewEngine.HostViewContext.GetHostJsObject(System.String)">
+            <summary>
+            根据名称获取一个hostjs对象
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:EFFC.Frame.Net.Web.ViewEngine.HostViewContext.SetDataModel(System.Object)">
+            <summary>
+            设置数据模型
+            </summary>
+            <param name="data"></param>
+        </member>
+        <member name="P:EFFC.Frame.Net.Web.ViewEngine.HostViewContext.RootPath">
+            <summary>
+            ~所表示的根路径的物理地址
+            </summary>
+        </member>
+        <member name="P:EFFC.Frame.Net.Web.ViewEngine.HostViewContext.CommonLibPath">
+            <summary>
+            公共库路径
+            </summary>
+        </member>
+        <member name="P:EFFC.Frame.Net.Web.ViewEngine.HostViewContext.RunTimeLibPath">
+            <summary>
+            运行时库路径
+            </summary>
+        </member>
+        <member name="P:EFFC.Frame.Net.Web.ViewEngine.HostViewContext.AllTags">
+            <summary>
+            获取所有的Tag
+            </summary>
+        </member>
+        <member name="P:EFFC.Frame.Net.Web.ViewEngine.HostViewContext.AllHostJsObject">
+            <summary>
+            获取所有的hostjs对象
+            </summary>
+        </member>
+        <member name="P:EFFC.Frame.Net.Web.ViewEngine.HostViewContext.CurrentModel">
+            <summary>
+            获取当前的数据模型
+            </summary>
+        </member>
+    </members>
+</doc>

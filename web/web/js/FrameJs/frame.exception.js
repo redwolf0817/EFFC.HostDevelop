@@ -1,11 +1,10 @@
-﻿; (function (fns) {
+﻿; (function ($,fns) {
     fns.ExceptionProcess = {
         Process : function (error, sourcename) {
             if (error != null) {
-                console.error("An error occured in \"" + sourcename + "\"!\n" + (error.message ? error.message : error));
-                //fns.Message.Dialog({
-                //    msg: "An error occured in \"" + sourcename + "\"!\n" + error.message
-                //});
+                fns.Message.Dialog({
+                    msg: "An error occured in \"" + sourcename + "\"!\n" + error.message
+                });
             }
         },
         ShowErrorMsg: function (msg) {
@@ -16,5 +15,5 @@
             }
         }
     };
-}(FrameNameSpace));
+}(jQuery,FrameNameSpace));
 

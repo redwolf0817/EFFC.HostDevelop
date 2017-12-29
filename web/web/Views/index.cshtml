@@ -1,0 +1,204 @@
+﻿@{
+    Layout = "~/Views/Shared/_layout.cshtml";
+}
+@section CssJs{
+    <!--=============== css  ===============-->
+
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/normalize.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="css/grid.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="css/owl.carousel.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="css/flexslider.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="css/magnific-popup.css" media="all">
+    <link rel="stylesheet" href="css/superslides.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="css/style.css" type="text/css" media="screen">
+
+    <!--=============== fonts  ===============-->
+
+    <link href='http://fonts.useso.com/css?family=Oswald:400,700|Open+Sans:400,300' rel='stylesheet' type='text/css'>
+
+    <!--=============== modernizr  ===============-->
+
+    <script src="js/modernizr.custom.97074.js"></script>
+
+    <!--=============== google map ===============-->
+    <!--=============== ie styles  ===============-->
+    <!--[if IE 8]><link rel="stylesheet" type="text/css" href="css/ie8.css" /><![endif]-->
+}
+@section CssJs_Buttom{
+    <script type="text/javascript" src="js/jpreloader.min.js"></script>
+    <script type="text/javascript" src="js/smoothscroll.js"></script>
+    <script type="text/javascript" src="js/jquery.easing.1.3.js"></script>
+    <script type="text/javascript" src="js/superslides.js"></script>
+    <script type="text/javascript" src="js/mixitup.js"></script>
+    <script type="text/javascript" defer src="js/jquery.flexslider.js"></script>
+    <script type="text/javascript" src="js/jquery.parallax-1.1.3.js"></script>
+    <script type="text/javascript" src="js/jquery.scrollTo-1.4.2-min.js"></script>
+    <script type="text/javascript" src="js/hoverdir.js"></script>
+    <script type="text/javascript" src="js/owl.carousel.min.js"></script>
+    <script type="text/javascript" src="js/appear.js"></script>
+    <script type="text/javascript" src="js/jquery.nav.js"></script>
+    <script type="text/javascript" src="js/fitvids.js"></script>
+    <script type="text/javascript" src="js/jquery.lavalamp.min.js"></script>
+    <script type="text/javascript" src="js/jquery.hammer.min.js"></script>
+    <script type="text/javascript" src="js/jquery.magnific-popup.min.js"></script>
+    <script type="text/javascript" src="js/scripts.js"></script>
+    <script type="text/javascript">
+        $(function (e) {
+            $("body").load(function () {
+                initialize();
+            })
+        })
+        function showContent(id, url) {
+
+        }
+    </script>
+    <style>
+        btn {
+            margin: 10px 0px 0px 10px;
+            background: #F00 none repeat scroll 0% 0%;
+            color: #FFF;
+            width: 150px;
+            height: 30px;
+            font: 14px Verdana,Arial,Helvetica,sans-serif;
+        }
+    </style>
+
+}
+
+<div class="navigation isDown">
+
+    <div class="nav-overlay"></div>
+
+    <div class="nav-button transition">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div class="inner">
+        <img src="~/images/logo.png" class="logo" alt="" title="">
+
+        <div class="link-holder" id="nav">
+            <ul>
+                <li class="current"><a href="#about" class="scroll-link">Tmpl原理演示</a></li>
+                <li><a href="#facts" class="scroll-link">Host JS IDE</a></li>
+                <li><a href="#example" class="scroll-link">Tmpl操作实例</a></li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="social-list">
+
+        <ul>
+            <li><a href="#" target="_blank"><i class="fa fa-facebook fa-2x"></i></a></li>
+            <li><a href="#" target="_blank"><i class="fa fa-twitter fa-2x"></i></a></li>
+            <li><a href="#" target="_blank"><i class="fa fa-linkedin fa-2x"></i></a></li>
+        </ul>
+
+    </div>
+
+</div>	<!--=============== navigation end ===============-->
+
+<div class="overlay fixed-overlay body-overlay"></div>
+
+<div class="wrapper">
+    <div id="intro">
+
+        <div id="topSlide">
+            <div id="slides">
+                <ul class="slides-container">
+
+                    <!-- Slide 1 -->
+
+                    <li>
+                        <div class="rester"></div>
+                        <div class="container">
+                            <h3>Responsive one page portfolio</h3>
+                            <h1 class="white">We are <span>Cashemir</span></h1>
+                            <div class="patern clear"><span></span></div>
+                        </div>
+
+                        <div style="background-image: url('/images/bg/1.jpg');" class="slides-big-img"></div>
+                    </li>
+
+                    <!-- Slide 2 -->
+
+                    <li>
+                        <div class="rester"></div>
+                        <div class="container">
+                            <h3>Personal or Team</h3>
+                            <h1 class="white"><span>Two</span> Versions</h1>
+                            <div class="patern clear"><span class="right"></span></div>
+                        </div>
+
+                        <div style="background-image: url('/images/bg/1.jpg');" class="slides-big-img"></div>
+                    </li>
+
+                    <!-- Slide 3 -->
+
+                    <li>
+                        <div class="rester"></div>
+                        <div class="container ">
+                            <h3>Four colors</h3>
+                            <h1 class="white">Slider <span>or</span> Video </h1>
+                            <div class="patern clear"><span></span></div>
+                        </div>
+
+                        <div style="background-image: url('images/bg/1.jpg');" class="slides-big-img"></div>
+                    </li>
+                </ul>
+
+                <div class="slides-navigation">
+                    <a href="#" class="prev"><i class="fa fa-long-arrow-left fa-2x"></i></a>
+                    <a href="#" class="next"><i class="fa fa-long-arrow-right fa-2x"></i></a>
+                </div>
+
+            </div>
+            <a href="#about" class="start"><img src="images/start.png" alt="" title=""></a>
+
+        </div>
+
+    </div><!--=============== intro end ===============-->
+    <div id="about" class="sections ws">
+        @*<div class="content">
+            <div class="container">
+                <h3 class="sections-head">Host JS IDE</h3>
+                <iframe src="editor.view" style="width:1200px;height:800px"></iframe>
+            </div>
+        </div>*@
+    </div>
+    <!--===============  section about end ===============-->
+    <div id="facts" class="sections">
+        <div class="content" style="background-color:#fff">
+            <div class="container">
+                <h3 class="sections-head">Host JS IDE</h3>
+                @*<iframe src="editor.view" style="width:1200px;height:800px"></iframe>*@
+                <iframe src="~/HTML/ace-builds-master/editor.html" style="width:1200px;height:800px"></iframe>
+            </div>
+        </div>
+    </div> 
+
+    <div id="example" class="sections">
+        <div class="content" style="background-color:#fff">
+            <div class="container">
+                <h3 class="sections-head">Tmpl操作实例</h3>
+                <div style="height:800px;border:1px solid #ccc">
+                    <div id="butt">
+                        <div class="btn">提交代码</div>
+                    </div>
+                </div>
+            </div>
+        </div>.
+
+    </div> 
+
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $('#about').load('/HTML/about.html');
+    })
+</script>

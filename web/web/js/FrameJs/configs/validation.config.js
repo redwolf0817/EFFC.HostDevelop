@@ -1,5 +1,5 @@
-﻿;(function($,fns){
-    fns.Config.Validation =
+﻿;(function($){
+    $.Frame.Config.Validation =
         {
             ShowMsg: function (sender, msg) {
                 this.RemoveMsg(sender);
@@ -17,7 +17,7 @@
             InProcessing: function (sender) {
                 this.RemoveProcessing(sender);
 
-                if (typeof fns.Control == "undefined") {
+                if (typeof $.JoJo.Control == "undefined") {
                     document.write("<script language=javascript src='/FrameJs/configs/jquery.control.js'></script>");
                 }
 
@@ -26,11 +26,11 @@
                 var divid = "__validation_div_" + $(sender).attr("id") + "__";
                 var divobj = $("<span id='" + divid + "' for='validation'></span>");
                 validobj.after(divobj);
-                divobj.html(fns.Control.GenImage(inputid + "_checkbusy", "/Theme/images/busy.gif") + "Checking");
+                divobj.html($.JoJo.Control.GenImage(inputid + "_checkbusy", "/Theme/images/busy.gif") + "Checking");
             },
             RemoveProcessing: function (sender) {
                 var divid = "__validation_div_" + $(sender).attr("id") + "__";
                 $("#" + divid).remove();
             }
         }
-}(jQuery,FrameNameSpace));
+}(jQuery));

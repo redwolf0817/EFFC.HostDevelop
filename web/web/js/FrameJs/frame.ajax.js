@@ -5,8 +5,7 @@ failedfunc(errorCode, errorMsg):errorCode錯誤代碼，errorMsg錯誤信息
 */
 ; (function ($,fns) {
     fns.Ajax = {
-        Ajax: function (options) {
-            var dtd = $.Deferred();
+        Ajax : function(options){
             var defaults = {
                 url: "",
                 returntype: "json",
@@ -15,31 +14,19 @@ failedfunc(errorCode, errorMsg):errorCode錯誤代碼，errorMsg錯誤信息
                 success: null,//function(rtn)
                 complete: null,//function (XMLHttpRequest, textStatus)
                 fail: null,//function(errorcode,errormsg)
-                async: true,
-                xhr: null,//function() custom xhr
-                contenttype: "application/x-www-form-urlencoded",
-                processdata: true,
-                crossDomain: true,
-                preprocessresult: true //是否需要对结果做框架预处理
+                async: true
             }
             var opts = $.extend(defaults, options);
-            if (fns.Config.Ajax) {
-                if (fns.Config.Ajax.beforeAjax) {
-                    fns.Config.Ajax.beforeAjax(opts);
-                }
-            }
             //json格式需要单独处理
             var datatype = opts.returntype == "json" ? "text" : opts.returntype;
             if (opts.url != "") {
-                var p = {
+                $.ajax({
                     type: "Post",
                     url: opts.url,
                     dataType: datatype,
                     cache: false,
                     data: opts.postdata,
                     async: opts.async,
-                    processData: opts.processdata,
-                    contentType: opts.contenttype,
                     beforeSend: function (XMLHttpRequest) {
                         if (opts.before != null) {
                             opts.before(XMLHttpRequest);
@@ -47,76 +34,56 @@ failedfunc(errorCode, errorMsg):errorCode錯誤代碼，errorMsg錯誤信息
                     },
                     success: function (rtn) {
                         var jobj;
-                        if (opts.preprocessresult) {
-                            if (rtn != null) {
-                                //判斷jsonstr是否就是json對象
-                                //jobj = $.parseJSON(rtn);
-                                if (jobj == null) {
-                                    jobj = rtn;
-                                }
-                                if (opts.returntype.toLowerCase() == "json") {
-                                    var bobj = eval("(" + jobj + ")");
-                                    if (bobj.ErrorCode == "") {
-
+                        if (rtn != null) {
+                            //判斷jsonstr是否就是json對象
+                            //jobj = $.parseJSON(rtn);
+                            if (jobj == null) {
+                                jobj = rtn;
+                            }
+                            if (opts.returntype.toLowerCase() == "json") {
+                                var bobj = eval("(" + jobj + ")");
+                                if (bobj.ErrorCode == "") {
+                                    if (bobj.Content.__isneedlogin__) {
+                                        fns.Message.DialogLogin("请先登录！", bobj.Content.__loginurl__);
+                                    } else {
                                         if (opts.success != null) {
                                             opts.success(bobj.Content);
-                                        } else {
-                                            dtd.resolve(bobj.Content);
-                                        }
-                                    } else {
-                                        fns.ExceptionProcess.ShowErrorMsg(bobj.ErrorCode + "\n" + bobj.ErrorMessage);
-                                        if (opts.fail) {
-                                            opts.fail(bobj.ErrorCode, bobj.ErrorMessage);
-                                        } else {
-                                            dtd.reject(bobj.ErrorCode, bobj.ErrorMessage);
                                         }
                                     }
                                 } else {
-                                    if (opts.success != null) {
-                                        opts.success(jobj);
-                                    } else {
-                                        dtd.resolve(jobj);
+                                    fns.ExceptionProcess.ShowErrorMsg(bobj.ErrorCode + "\n" + bobj.ErrorMessage);
+                                    if (opts.fail) {
+                                        opts.fail(bobj.ErrorCode, bobj.ErrorMessage);
                                     }
                                 }
-                            }
-                        } else {
-                            if (opts.success != null) {
-                                opts.success(jobj);
                             } else {
-                                dtd.resolve(jobj);
+                                if (opts.success != null) {
+                                    opts.success(jobj);
+                                }
                             }
                         }
                     },
                     complete: function (XMLHttpRequest, textStatus) {
-                        completehandler(XMLHttpRequest, textStatus, opts);
+                        if (opts.complete != null) {
+                            opts.complete(XMLHttpRequest, textStatus);
+                        }
                     },
                     error: function (jqXHR, errormsg, errorThrown) {
-                        errorhandler(jqXHR, errormsg, errorThrown, opts);
-                        dtd.reject(errormsg);
-                    }
-                }
-                if (opts.xhr != null) {
-                    p.xhr = function () {
-                        if (opts.xhr != null) {
-                            return opts.xhr();
-                        } else {
-                            return new XMLHttpRequest();
+                        if (opts.fail) {
+                            opts.fail(errormsg, errormsg);
                         }
                     }
-                }
-                $.ajax(p);
+                });
             } else {
                 fns.ExceptionProcess.ShowErrorMsg("需要提供url信息！");
             }
-            return dtd.promise();
         },
         AjaxForm: function (options) {
-            var dtd = $.Deferred();
             var defaults = {
                 url: "",
                 formid:"",
                 returntype: "html",
-                before: null,//bool function(XMLHttpRequest)，if false abort
+                befersend: null,//bool function(XMLHttpRequest)，if false abort
                 success: null,//function(jsonrtn)
                 complete: null,//function(XMLHttpRequest, textStatus)
                 fail: null//function(errorcode,errormsg)
@@ -155,34 +122,31 @@ failedfunc(errorCode, errorMsg):errorCode錯誤代碼，errorMsg錯誤信息
                                 } else {
                                     if (opts.success != null) {
                                         opts.success(jobj.Content);
-                                    } else {
-                                        dtd.resolve(bobj.Content);
                                     }
                                 }
                             } else {
                                 fns.ExceptionProcess.ShowErrorMsg(jobj.ErrorCode + "\n" + jobj.ErrorMessage);
                                 if (opts.fail) {
                                     opts.fail(jobj.ErrorCode, jobj.ErrorMessage);
-                                } else {
-                                    dtd.reject(bobj.ErrorCode, bobj.ErrorMessage);
                                 }
                             }
                         }
                     } else {
                         if (opts.success != null) {
                             opts.success(rtn);
-                        } else {
-                            dtd.resolve(rtn);
                         }
                     }
                     
                 },
                 complete: function (XMLHttpRequest, textStatus) {
-                    completehandler(XMLHttpRequest, textStatus,opts);
+                    if (opts.complete != null) {
+                        opts.complete(XMLHttpRequest, textStatus);
+                    }
                 },
                 error: function (jqXHR, errormsg, errorThrown) {
-                    errorhandler(jqXHR, errormsg, errorThrown, opts);
-                    dtd.reject(errormsg);
+                    if (opts.fail) {
+                        opts.fail(errormsg, errormsg);
+                    }
                 }
             };
 
@@ -192,87 +156,83 @@ failedfunc(errorCode, errorMsg):errorCode錯誤代碼，errorMsg錯誤信息
             });
 
             __f.submit();
-            return dtd.promise();
-        },
-        //ajax提交，应对含有文件上传的情况
-        AjaxUpload: function (options) {
+        }
+    }
+    fns.Ajax.WebSocket = {
+        Open: function (options) {
             var defaults = {
                 url: "",
-                returntype: "json",
-                postdata: "",
-                before: null, //function(XMLHttpRequest)
-                success: null,//function(rtn)
-                complete: null,//function (XMLHttpRequest, textStatus)
-                fail: null,//function(errorcode,errormsg)
-                xhr: null//function() custom xhr
+                onopen: null,//function(ws)
+                onmessage: null,//function(ws,data)
+                onerror: null,//function(ws,status,msg)
+                onclose: null//function()
             }
+            var me = this;
             var opts = $.extend(defaults, options);
-
-            var fd = new FormData();
-            if (opts.postdata != null) {
-                for (var s in opts.postdata) {
-                    fd.append(s, opts.postdata[s]);
-                }
+            var ws = new WebSocket('ws://' + window.location.hostname + (window.location.port == "" ? "" : ':' + window.location.port) + '/' + opts.url);
+            if (!ws) {
+                fns.ExceptionProcess.ShowErrorMsg("当前浏览器并不支持WebSocket");
+                return null;
             }
-
-            opts.processdata = false;
-            opts.contenttype = false;
-            opts.postdata = fd;
-
-            return this.Ajax(opts);
-        }
-    }
-
-
-    function successhandler(rtn, opts) {
-        var jobj;
-        if (opts.preprocessresult) {
-            if (rtn != null) {
-                //判斷jsonstr是否就是json對象
-                //jobj = $.parseJSON(rtn);
-                if (jobj == null) {
-                    jobj = rtn;
+            if (ws) {
+                ws.onopen = function () {
+                    if (opts.onopen) {
+                        opts.onopen(me);
+                    }
                 }
-                if (opts.returntype.toLowerCase() == "json") {
-                    var bobj = eval("(" + jobj + ")");
-                    if (bobj.ErrorCode == "") {
-                        if (typeof (bobj.Content.__isvalid__) != "undefined" && !bobj.Content.__isvalid__) {
-                            fns.Message.DialogToUrl(bobj.Content.__msg__, bobj.Content.__tonurl__);
-                        } else {
-                            if (opts.success != null) {
-                                opts.success(bobj.Content);
-                            }
+                ws.onmessage = function (evt) {
+                    if (Object.prototype.toString.call(evt.data) === "[object Blob]") {
+                        if (opts.onmessage) {
+                            opts.onmessage(me, evt.data);
                         }
                     } else {
-                        fns.ExceptionProcess.ShowErrorMsg(bobj.ErrorCode + "\n" + bobj.ErrorMessage);
-                        if (opts.fail) {
-                            opts.fail(bobj.ErrorCode, bobj.ErrorMessage);
+                        eval("var jobj=" + evt.data);
+                        if (jobj) {
+                            if (jobj.ErrorCode == "") {
+                                if (opts.onmessage) {
+                                    opts.onmessage(me, jobj.Content);
+                                }
+                            } else {
+                                fns.ExceptionProcess.ShowErrorMsg(jobj.ErrorCode + "\n" + jobj.ErrorMessage);
+                                if (opts.onerror) {
+                                    opts.onerror(me, jobj.ErrorCode, jobj.ErrorMessage);
+                                }
+                            }
+                        } else {
+                            $('#result').val($('#result').val() + "\n" + evt.data);
                         }
                     }
-                } else {
-                    if (opts.success != null) {
-                        opts.success(jobj);
+                }
+                ws.onerror = function (evt) {
+                    fns.ExceptionProcess.ShowErrorMsg(evt.message);
+                }
+                ws.onclose = function () {
+                    if (opts.onclose) {
+                        opts.onclose();
                     }
                 }
             }
-        } else {
-            if (opts.success != null) {
-                opts.success(jobj);
+            $(me).data("ws", ws);
+            return me;
+        },
+        Send: function (obj) {
+            var ws = $(this).data("ws");
+            if (ws) {
+                ws.send(JSON.stringify(obj), 20971520);
+            }
+        },
+        Close: function () {
+            var ws = $(this).data("ws");
+            if (ws) {
+                ws.close();
+            }
+        },
+        IsClose: function () {
+            var ws = $(this).data("ws");
+            if (ws) {
+                return ws.CLOSED;
             }
         }
     }
-
-    function completehandler(XMLHttpRequest, textStatus, opts) {
-        if (opts.complete != null) {
-            opts.complete(XMLHttpRequest, textStatus);
-        }
-
-    }
-
-    function errorhandler(jqXHR, errormsg, errorThrown, opts) {
-        if (opts.fail) {
-            opts.fail(errormsg, errormsg);
-        }
-    }
-}(jQuery, FrameNameSpace))
+}(jQuery,FrameNameSpace))
 

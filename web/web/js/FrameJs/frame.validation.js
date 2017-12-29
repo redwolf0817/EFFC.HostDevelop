@@ -38,7 +38,7 @@
                 InProcessing: null,//function (sender)
                 RemoveProcessing: null//function (sender)
             }
-            this.opts = fns.extend(defaults, options);
+            this.opts = $.extend(defaults, options);
             this.dics = new js.util.Dictionary();
             this.isvalidall = true;
         }
@@ -68,7 +68,7 @@
                 removemsg: null//function(sender)
             }
             
-            var opts = fns.extend(redefault, reoptions);
+            var opts = $.extend(redefault, reoptions);
             if (opts.id != "" && $("#" + opts.id)) {
                 var self = this;
                 var validobj = $("#" + redefault.id);
@@ -186,7 +186,7 @@
                 //回传的数据
                 data: ""
             }
-            var opts = fns.extend(redefault, reoptions);
+            var opts = $.extend(redefault, reoptions);
             if (opts.id != "" && $("#" + opts.id)) {
                 var self = this;
 
@@ -374,7 +374,7 @@
                 //检核超时执行的事件
                 timeoutprocess: function () { }
             }
-            var opts = fns.extend(vadefaults, reoptions);
+            var opts = $.extend(vadefaults, reoptions);
             //先清除前一次的验证状态
             self.ResetState();
 

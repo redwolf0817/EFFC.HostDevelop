@@ -537,4 +537,4 @@
     $.fn.treetable = function (options) {
         return methods.init(this,options);
     }
-})(jQuery, FrameNameSpace);
+})(jQuery,FrameNameSpace);
